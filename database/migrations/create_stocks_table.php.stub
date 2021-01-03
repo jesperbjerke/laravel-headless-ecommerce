@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateStocksTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('stocks', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('store_id')->nullable()->constrained()->onDelete('cascade');
+
+            $table->unsignedInteger('current_quantity')->default(0);
+            $table->unsignedInteger('incoming_quantity')->default(0);
+            $table->unsignedInteger('outgoing_quantity')->default(0);
+            $table->unsignedInteger('low_stock_threshold')->nullable();
+
+            $table->timestamps();
+        });
+    }
+}

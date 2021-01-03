@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateStoresTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('stores', function (Blueprint $table) {
+            $table->id();
+
+            $table->json('name');
+
+            $table->string('currency')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+}

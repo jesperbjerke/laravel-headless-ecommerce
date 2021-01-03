@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateProductsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+
+            $table->string('sku');
+
+            $table->json('name');
+            $table->json('slug');
+
+            $table->tinyInteger('type')->unsigned();
+
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null');
+
+            $table->json('excerpt')->nullable();
+            $table->json('description')->nullable();
+            $table->json('keywords')->nullable();
+            $table->json('meta')->nullable();
+
+            $table->tinyInteger('status')->unsigned();
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique('sku');
+        });
+    }
+}

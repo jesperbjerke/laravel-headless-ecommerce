@@ -1,0 +1,18 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateProductStoreTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('product_stores', function (Blueprint $table) {
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('store_id')->constrained()->onDelete('cascade');
+
+            $table->primary(['product_id', 'store_id']);
+        });
+    }
+}

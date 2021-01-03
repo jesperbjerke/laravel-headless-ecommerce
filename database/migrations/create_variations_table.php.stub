@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateVariationsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('variations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
+            $table->foreignId('property_value_id')->constrained()->onDelete('cascade');
+            $table->foreignId('main_product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('variant_product_id')->constrained('products')->onDelete('cascade');
+
+            $table->json('sync_options');
+        });
+    }
+}

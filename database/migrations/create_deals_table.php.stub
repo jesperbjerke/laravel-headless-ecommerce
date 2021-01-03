@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateDealsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('deals', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('store_id')->nullable()->constrained()->onDelete('cascade');
+
+            $table->unsignedBigInteger('discount_value');
+            $table->tinyInteger('discount_type')->unsigned();
+            $table->string('currency');
+
+            $table->json('rules')->nullable();
+
+            $table->timestamp('activates_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+}

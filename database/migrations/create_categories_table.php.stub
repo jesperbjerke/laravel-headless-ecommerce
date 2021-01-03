@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use Kalnoy\Nestedset\NestedSet;
+
+class CreateCategoriesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+
+            $table->json('name');
+            $table->json('slug');
+
+            // Nested set columns
+            $table->unsignedBigInteger(NestedSet::LFT)->default(0);
+            $table->unsignedBigInteger(NestedSet::RGT)->default(0);
+            $table->unsignedBigInteger(NestedSet::PARENT_ID)->nullable();
+            $table->index(NestedSet::getDefaultColumns());
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+}

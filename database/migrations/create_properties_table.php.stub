@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreatePropertiesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('properties', function (Blueprint $table) {
+            $table->id();
+
+            $table->json('name');
+            $table->foreignId('property_group_id')->nullable()->constrained()->onDelete('set null');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+}

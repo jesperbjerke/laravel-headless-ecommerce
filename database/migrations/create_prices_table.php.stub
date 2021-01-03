@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreatePricesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('prices', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('store_id')->nullable()->constrained()->onDelete('cascade');
+
+            $table->string('currency');
+
+            $table->unsignedBigInteger('value');
+            $table->unsignedBigInteger('discounted_value')->nullable();
+
+            $table->decimal('vat_percentage', 4, 3)->unsigned()->nullable();
+
+            $table->timestamps();
+        });
+    }
+}
