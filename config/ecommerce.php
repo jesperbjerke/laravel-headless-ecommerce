@@ -189,11 +189,29 @@ return [
         'trigger_expiring_event_after' => env('CART_TRIGGER_EXPIRING_EVENT_AFTER', 60)
     ],
 
-
+    /*
+    |--------------------------------------------------------------------------
+    | Holds what controller classes to use, for easy extendability
+    |--------------------------------------------------------------------------
+    |
+    | Override these values with your own classes and extending the originals
+    |
+    */
     'controllers' => [
+        'product' => Bjerke\Ecommerce\Http\Controllers\ProductController::class
     ],
 
+
     'routing' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Root routing options
+        |--------------------------------------------------------------------------
+        |
+        | Define what options should be passed to the global route group
+        | encompassing ALL ecommerce routes
+        |
+        */
         'root' => [
             'prefix' => 'api',
             'middleware' => ['api']
