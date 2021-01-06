@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Lang;
@@ -126,13 +127,13 @@ class Product extends BreadModel implements HasMedia
         $this->addFieldHasMany(
             'prices',
             Lang::get('ecommerce::models.price.plural'),
-            self::$FIELD_REQUIRED
+            self::$FIELD_OPTIONAL
         );
 
         $this->addFieldHasMany(
             'stock',
             Lang::get('ecommerce::models.stock.plural'),
-            self::$FIELD_REQUIRED
+            self::$FIELD_OPTIONAL
         );
 
         $this->addFieldHasMany(
@@ -183,7 +184,11 @@ class Product extends BreadModel implements HasMedia
         return (in_array($relationName, [
             'brand',
             'categories',
-            'stores'
+            'stores',
+            'prices',
+            'stocks',
+            'propertyValues',
+            'variations'
         ], true));
     }
 
@@ -212,9 +217,9 @@ class Product extends BreadModel implements HasMedia
                     ->using(config('ecommerce.models.category_product'));
     }
 
-    public function prices(): HasMany
+    public function prices(): MorphMany
     {
-        return $this->hasMany(config('ecommerce.models.price'));
+        return $this->morphMany(config('ecommerce.models.price'), 'priceable');
     }
 
     public function deals(): BelongsToMany

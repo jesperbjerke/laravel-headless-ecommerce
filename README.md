@@ -68,6 +68,16 @@ composer require bjerke/laravel-headless-ecommerce
     - LowStock
         - Keep in mind that these can be triggered multiple times for the same cart. You probable need to keep track if you have already acted on this event before.
 
+### Routes
+    - publish to host your own
+    - configurations
+    - overriding controllers
+
+### Customers / Users
+This package does not provide any logic for handling customers or logged in users. This is up to the implementing application to add.
+As an example, you might want to add a user_id column to the orders table to be able to link it to a user account.
+Just change the migration after publishing and then extend the appropriate models/observers/controllers to handle this new column.
+
 ### Extending / Overriding
 
 ### Requirements

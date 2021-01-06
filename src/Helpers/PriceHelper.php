@@ -3,7 +3,6 @@
 namespace Bjerke\Ecommerce\Helpers;
 
 use Bjerke\Ecommerce\Enums\DealDiscountType;
-use Bjerke\Ecommerce\Exceptions\InvalidDeal;
 use Bjerke\Ecommerce\Models\Deal;
 use Bjerke\Ecommerce\Models\Price;
 use Illuminate\Support\Carbon;
@@ -27,14 +26,22 @@ class PriceHelper
             $priceValue = self::applyDeal($priceValue, $deal);
         }
 
+        $vatPercentage = $price->vat_percentage ?? 0;
+
         $total = $priceValue->multiply($quantity);
-        $totalExVat = $total->divide(($price->vat_percentage / 100) + 1);
+        $totalExVat = $total->divide(($vatPercentage / 100) + 1);
 
         $originalPriceValue = new Money($price->value, new Currency($price->currency));
         $originalTotal = $originalPriceValue->multiply($quantity);
-        $originalTotalExVat = $originalTotal->divide(($price->vat_percentage / 100) + 1);
+        $originalTotalExVat = $originalTotal->divide(($vatPercentage / 100) + 1);
 
-        return self::formatPrices($total, $totalExVat, $originalTotal, $originalTotalExVat, $locale);
+        $prices = self::formatPrices($total, $totalExVat, $originalTotal, $originalTotalExVat, $locale);
+
+        if ($quantity > 1) {
+            $prices['unit'] = self::calculateTotals($price, $locale, 1, $deal);
+        }
+
+        return $prices;
     }
 
     public static function isDealApplicable(Price $price, Deal $deal, $validateRelations = false): bool

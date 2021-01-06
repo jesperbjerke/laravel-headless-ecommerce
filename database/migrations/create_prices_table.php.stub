@@ -11,7 +11,7 @@ class CreatePricesTable extends Migration
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->morphs('priceable');
             $table->foreignId('store_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->string('currency');

@@ -11,7 +11,7 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
 
-            $table->string('sku');
+            $table->string('sku')->unique();
 
             $table->json('name');
             $table->json('slug');
@@ -29,8 +29,6 @@ class CreateProductsTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-
-            $table->unique('sku');
         });
     }
 }

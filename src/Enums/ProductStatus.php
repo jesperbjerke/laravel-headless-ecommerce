@@ -4,7 +4,7 @@ namespace Bjerke\Ecommerce\Enums;
 
 use Bjerke\Enum\BaseEnum;
 
-final class ProductStatus extends BaseEnum
+class ProductStatus extends BaseEnum
 {
     public const DRAFT = 10;
     public const INACTIVE = 20;

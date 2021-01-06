@@ -2,31 +2,44 @@
 
 namespace Bjerke\Ecommerce;
 
+use Bjerke\Ecommerce\Console\Commands\CheckExpiringCarts;
+use Bjerke\Ecommerce\Console\Commands\CleanAbandonedCarts;
 use Bjerke\Ecommerce\Observers\CategoryProductObserver;
+use Bjerke\Ecommerce\Observers\OrderObserver;
 use Bjerke\Ecommerce\Observers\ProductObserver;
 use Bjerke\Ecommerce\Observers\StockObserver;
 use Bjerke\Ecommerce\Observers\VariationObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class EcommerceServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->publishMigrations();
-
-        $this->publishes([
-            __DIR__ . '/../config/ecommerce.php' => config_path('ecommerce.php'),
-        ], 'ecommerce.config');
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'ecommerce');
-        $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/ecommerce'),
-        ], 'ecommerce.lang');
 
         $this->registerObservers();
+        $this->registerRoutes();
 
         Relation::morphMap(config('ecommerce.models'));
+    }
+
+    private function bootForConsole(): void
+    {
+        $this->publishMigrations();
+
+        $this->publishes([__DIR__ . '/../config/ecommerce.php' => config_path('ecommerce.php'),], 'ecommerce.config');
+        $this->publishes([__DIR__ . '/../resources/lang' => resource_path('lang/vendor/ecommerce'),], 'ecommerce.lang');
+
+        $this->commands([
+            CheckExpiringCarts::class,
+            CleanAbandonedCarts::class
+        ]);
     }
 
     public function register(): void
@@ -47,6 +60,28 @@ class EcommerceServiceProvider extends ServiceProvider
 
         $productModel = config('ecommerce.models.product');
         $productModel::observe(ProductObserver::class);
+
+        $orderModel = config('ecommerce.models.order');
+        $orderModel::observe(OrderObserver::class);
+    }
+
+    private function registerRoutes()
+    {
+        $appRoutePath = base_path('routes');
+        $routeFile = 'ecommerce_api.php';
+
+        $this->publishes([
+            __DIR__ . '/../routes/' . $routeFile => $appRoutePath,
+        ], 'ecommerce.routes');
+
+        // If application has published its own route file, do not load the one in the package
+        if (file_exists($appRoutePath . '/' . $routeFile)) {
+            return;
+        }
+
+        Route::group(config('ecommerce.routing.root'), function () use ($routeFile) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/' . $routeFile);
+        });
     }
 
     private function publishMigrations(): void
@@ -187,6 +222,31 @@ class EcommerceServiceProvider extends ServiceProvider
             $this->publishes([
                 $baseMigrationPath . 'create_deal_product_table.php.stub' => database_path(
                     $basePublishFilename . '16_create_deal_product_table.php'
+                )
+            ], $publishGroup);
+        }
+
+
+        if (!class_exists('CreateShippingMethodsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_shipping_methods_table.php.stub' => database_path(
+                    $basePublishFilename . '17_create_shipping_methods_table.php'
+                )
+            ], $publishGroup);
+        }
+
+        if (!class_exists('CreateOrdersTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_orders_table.php.stub' => database_path(
+                    $basePublishFilename . '18_create_orders_table.php'
+                )
+            ], $publishGroup);
+        }
+
+        if (!class_exists('CreateOrderItemsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_order_items_table.php.stub' => database_path(
+                    $basePublishFilename . '19_create_order_items_table.php'
                 )
             ], $publishGroup);
         }

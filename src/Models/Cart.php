@@ -5,7 +5,6 @@ namespace Bjerke\Ecommerce\Models;
 use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Exceptions\CartHasExpired;
 use Bjerke\Ecommerce\Helpers\PriceHelper;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -26,8 +25,8 @@ class Cart extends BreadModel
     public static function boot(): void
     {
         parent::boot();
-        static::creating(static function (Model $invite) {
-            $invite->setAttribute($invite->getKeyName(), Str::uuid());
+        static::creating(static function (Cart $cart) {
+            $cart->setAttribute($cart->getKeyName(), Str::uuid());
         });
     }
 

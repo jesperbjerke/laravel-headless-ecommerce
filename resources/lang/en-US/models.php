@@ -74,6 +74,21 @@ return [
     'cart_item' => [
         'singular' => 'Cart item',
         'plural' => 'Cart items'
-    ]
+    ],
+
+    'order' => [
+        'singular' => 'Order',
+        'plural' => 'Orders'
+    ],
+
+    'order_item' => [
+        'singular' => 'Order item',
+        'plural' => 'Order items'
+    ],
+
+    'shipping_method' => [
+        'singular' => 'Shipping method',
+        'plural' => 'Shipping methods'
+    ],
 
 ];

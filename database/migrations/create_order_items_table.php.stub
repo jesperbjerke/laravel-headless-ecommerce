@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateOrderItemsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('order_id')->constrained()->onDelete('cascade');
+
+            $table->smallInteger('payment_status');
+
+            $table->string('name');
+            $table->string('reference');
+            $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null');
+
+            $table->unsignedBigInteger('value');
+            $table->unsignedBigInteger('discounted_value')->nullable();
+            $table->unsignedBigInteger('vat_value');
+
+            $table->unsignedBigInteger('unit_value');
+            $table->decimal('vat_percentage', 4, 3)->unsigned()->nullable();
+
+            $table->smallInteger('quantity')->unsigned();
+
+            $table->json('meta')->nullable();
+
+            $table->timestamps();
+        });
+    }
+}

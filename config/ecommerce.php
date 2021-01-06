@@ -7,7 +7,7 @@ return [
     | Holds what model classes to use, for easy extendability
     |--------------------------------------------------------------------------
     |
-    | Override this values with your own classes and extending the originals
+    | Override these values with your own classes and extending the originals
     |
     */
     'models' => [
@@ -25,7 +25,10 @@ return [
         'stock' => Bjerke\Ecommerce\Models\Stock::class,
         'cart' => Bjerke\Ecommerce\Models\Cart::class,
         'cart_item' => Bjerke\Ecommerce\Models\CartItem::class,
-        'deal' => Bjerke\Ecommerce\Models\Deal::class
+        'deal' => Bjerke\Ecommerce\Models\Deal::class,
+        'order' => Bjerke\Ecommerce\Models\Order::class,
+        'order_item' => Bjerke\Ecommerce\Models\OrderItem::class,
+        'shipping_method' => Bjerke\Ecommerce\Models\ShippingMethod::class,
     ],
 
     /*
@@ -33,7 +36,7 @@ return [
     | Holds what job classes to use, for easy extendability
     |--------------------------------------------------------------------------
     |
-    | Override this values with your own classes and extending the originals
+    | Override these values with your own classes and extending the originals
     |
     */
     'jobs' => [
@@ -42,10 +45,6 @@ return [
         'sync_variations' => Bjerke\Ecommerce\Jobs\SyncVariations::class,
         'sync_variant_product' => Bjerke\Ecommerce\Jobs\SyncVariantProduct::class,
     ],
-
-    // 'controllers' => [
-    //     'product' =>
-    // ],
 
     'media' => [
         'images' => [
@@ -189,5 +188,16 @@ return [
         */
         'trigger_expiring_event_after' => env('CART_TRIGGER_EXPIRING_EVENT_AFTER', 60)
     ],
+
+
+    'controllers' => [
+    ],
+
+    'routing' => [
+        'root' => [
+            'prefix' => 'api',
+            'middleware' => ['api']
+        ]
+    ]
 
 ];

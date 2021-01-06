@@ -6,6 +6,7 @@ use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Helpers\PriceHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
 
@@ -83,9 +84,9 @@ class Price extends BreadModel
         ];
     }
 
-    public function product(): BelongsTo
+    public function priceable(): MorphTo
     {
-        return $this->belongsTo(config('ecommerce.models.product'));
+        return $this->morphTo();
     }
 
     public function store(): BelongsTo
@@ -104,7 +105,7 @@ class Price extends BreadModel
     {
         /* @var $deal Deal|null */
         $deal = ($includeDeals) ? $this->applicableDeals->latest()->first() : null;
-        return PriceHelper::calculateTotals($this, App::getLocale(), 1, $deal, false);
+        return PriceHelper::calculateTotals($this, App::getLocale(), $quantity, $deal, false);
     }
 
     public function getTotalsAttribute(): array

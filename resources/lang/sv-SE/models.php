@@ -74,6 +74,22 @@ return [
     'cart_item' => [
         'singular' => 'Varukorgsinnehåll',
         'plural' => 'Varukorgsinnehåll'
-    ]
+    ],
+
+    'order' => [
+        'singular' => 'Order',
+        'plural' => 'Ordrar'
+    ],
+
+    'order_item' => [
+        'singular' => 'Order rad',
+        'plural' => 'Order rader'
+    ],
+
+    'shipping_method' => [
+        'singular' => 'Leveransalternativ',
+        'plural' => 'Leveransalternativ'
+    ],
+
 
 ];
