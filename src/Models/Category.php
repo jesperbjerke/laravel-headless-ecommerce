@@ -32,8 +32,7 @@ class Category extends BreadModel
     {
         return SlugOptions::create()
                           ->generateSlugsFrom('name')
-                          ->saveSlugsTo('slug')
-                          ->preventOverwrite();
+                          ->saveSlugsTo('slug');
     }
 
     public function products(): BelongsToMany

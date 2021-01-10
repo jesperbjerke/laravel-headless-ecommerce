@@ -2,8 +2,6 @@
 
 namespace Bjerke\Ecommerce\Enums;
 
-use Bjerke\Enum\BaseEnum;
-
 class OrderStatus extends BaseEnum
 {
     public const DRAFT = 10;

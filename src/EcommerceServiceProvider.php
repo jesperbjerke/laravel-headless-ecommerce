@@ -196,8 +196,8 @@ class EcommerceServiceProvider extends ServiceProvider
 
         if (!class_exists('CreateCartItemsTable')) {
             $this->publishes([
-                $baseMigrationPath . 'create_carts_items_table.php.stub' => database_path(
-                    $basePublishFilename . '13_create_carts_items_table.php'
+                $baseMigrationPath . 'create_cart_items_table.php.stub' => database_path(
+                    $basePublishFilename . '13_create_cart_items_table.php'
                 )
             ], $publishGroup);
         }

@@ -63,6 +63,7 @@ class Order extends BreadModel
             'name',
             null,
             [
+                'fillable' => (!$this->exists || $this->status === OrderStatus::DRAFT),
                 'extra_data' => [
                     'prefetch' => true
                 ]

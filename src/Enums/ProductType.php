@@ -2,8 +2,6 @@
 
 namespace Bjerke\Ecommerce\Enums;
 
-use Bjerke\Enum\BaseEnum;
-
 class ProductType extends BaseEnum
 {
     public const REGULAR = 10;

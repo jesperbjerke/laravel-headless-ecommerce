@@ -2,8 +2,6 @@
 
 namespace Bjerke\Ecommerce\Enums;
 
-use Bjerke\Enum\BaseEnum;
-
 class PaymentStatus extends BaseEnum
 {
     public const PENDING = 10;

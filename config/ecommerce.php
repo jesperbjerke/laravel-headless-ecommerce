@@ -198,7 +198,19 @@ return [
     |
     */
     'controllers' => [
-        'product' => Bjerke\Ecommerce\Http\Controllers\ProductController::class
+        'product' => Bjerke\Ecommerce\Http\Controllers\ProductController::class,
+        'brand' => Bjerke\Ecommerce\Http\Controllers\BrandController::class,
+        'cart' => Bjerke\Ecommerce\Http\Controllers\CartController::class,
+        'category' => Bjerke\Ecommerce\Http\Controllers\CategoryController::class,
+        'deal' => Bjerke\Ecommerce\Http\Controllers\DealController::class,
+        'order' => Bjerke\Ecommerce\Http\Controllers\OrderController::class,
+        'price' => Bjerke\Ecommerce\Http\Controllers\PriceController::class,
+        'property' => Bjerke\Ecommerce\Http\Controllers\PropertyController::class,
+        'property_group' => Bjerke\Ecommerce\Http\Controllers\PropertyGroupController::class,
+        'property_value' => Bjerke\Ecommerce\Http\Controllers\PropertyValueController::class,
+        'shipping_method' => Bjerke\Ecommerce\Http\Controllers\ShippingMethodController::class,
+        'stock' => Bjerke\Ecommerce\Http\Controllers\StockController::class,
+        'store' => Bjerke\Ecommerce\Http\Controllers\StoreController::class,
     ],
 
 
@@ -215,6 +227,19 @@ return [
         'root' => [
             'prefix' => 'api',
             'middleware' => ['api']
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authentication routing options
+        |--------------------------------------------------------------------------
+        |
+        | Defined the auth middleware to use when requiring
+        | a logged in user to access
+        |
+        */
+        'auth' => [
+            'middleware' => 'auth:api'
         ]
     ]
 

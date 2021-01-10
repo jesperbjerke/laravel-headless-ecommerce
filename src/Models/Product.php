@@ -185,8 +185,6 @@ class Product extends BreadModel implements HasMedia
             'brand',
             'categories',
             'stores',
-            'prices',
-            'stocks',
             'propertyValues',
             'variations'
         ], true));
@@ -196,8 +194,7 @@ class Product extends BreadModel implements HasMedia
     {
         return SlugOptions::create()
                           ->generateSlugsFrom('name')
-                          ->saveSlugsTo('slug')
-                          ->preventOverwrite();
+                          ->saveSlugsTo('slug');
     }
 
     public function brand(): BelongsTo
