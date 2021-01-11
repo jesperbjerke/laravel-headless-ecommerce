@@ -17,6 +17,12 @@ class CartItem extends BreadModel
         'cart'
     ];
 
+    protected $fillable = [
+        'cart_id',
+        'product_id',
+        'quantity'
+    ];
+
     public function cart(): BelongsTo
     {
         return $this->belongsTo(config('ecommerce.models.cart'));
@@ -53,18 +59,29 @@ class CartItem extends BreadModel
     {
         $this->loadMissing(['product.stocks', 'product.prices']);
 
+        self::validateStock($this->product, $this->quantity, $storeId);
+        self::validatePricing($this->product, $currency, $storeId);
+    }
+
+    public static function validateStock(Product $product, int $quantity, int $storeId = null): bool
+    {
         /* @var $stock Stock|null */
-        $stock = $this->product->stocks
+        $stock = $product->stocks
             ->where('store_id', $storeId)
             ->first();
 
         $availableStock = ($stock) ? ($stock->current_quantity - $stock->outgoing_quantity) : 0;
-        if ($availableStock < $this->quantity) {
+        if ($availableStock < $quantity) {
             throw new InvalidCartItemQuantity();
         }
 
+        return true;
+    }
+
+    public static function validatePricing(Product $product, string $currency, int $storeId = null): bool
+    {
         /* @var $price Price|null */
-        $price = $this->product->prices
+        $price = $product->prices
             ->where('currency', $currency)
             ->where('store_id', $storeId)
             ->first();
@@ -72,5 +89,7 @@ class CartItem extends BreadModel
         if (!$price) {
             throw new CorruptCartPricing();
         }
+
+        return true;
     }
 }

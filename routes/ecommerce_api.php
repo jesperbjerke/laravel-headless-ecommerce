@@ -157,7 +157,11 @@ Route::group(['prefix' => 'prices'], static function () {
  * Carts
  */
 Route::group(['prefix' => 'carts'], static function () {
-    // ..
+    Route::post('', [config('ecommerce.controllers.cart'), 'create']);
+    Route::get('{id}', [config('ecommerce.controllers.cart'), 'view']);
+    Route::post('{id}/items', [config('ecommerce.controllers.cart'), 'addCartItem']);
+    Route::patch('{id}/items/{itemId}', [config('ecommerce.controllers.cart'), 'updateCartItem']);
+    Route::delete('{id}/items/{itemId}', [config('ecommerce.controllers.cart'), 'deleteCartItem']);
 });
 
 /**

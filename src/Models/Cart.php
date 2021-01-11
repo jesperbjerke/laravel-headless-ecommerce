@@ -8,6 +8,7 @@ use Bjerke\Ecommerce\Helpers\PriceHelper;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Money\Currency;
@@ -28,6 +29,32 @@ class Cart extends BreadModel
         static::creating(static function (Cart $cart) {
             $cart->setAttribute($cart->getKeyName(), Str::uuid());
         });
+    }
+
+    protected function define()
+    {
+        $this->addFieldHasOne(
+            'store',
+            Lang::get('ecommerce::models.store.singular'),
+            self::$FIELD_OPTIONAL,
+            'name',
+            null,
+            [
+                'extra_data' => [
+                    'prefetch' => true
+                ]
+            ]
+        );
+
+        $this->addFieldSelect(
+            'currency',
+            Lang::get('ecommerce::fields.currency'),
+            self::$FIELD_REQUIRED,
+            config('ecommerce.currencies.available'),
+            [
+                'default' => config('ecommerce.currencies.default')
+            ]
+        );
     }
 
     public function cartItems(): HasMany
