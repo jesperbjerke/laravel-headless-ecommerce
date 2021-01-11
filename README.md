@@ -93,6 +93,16 @@ Models can be overridden with your own versions. Just extend the original ones a
         - Is using the "can" middleware, to prohibit unautorized access to non-public endpoints. You can use packages like Bouncer or Spatie Laravel Permission to handle abilities, or define your own Gates & Policies.
         - Abilities:
             - manage-products
+            - manage-brands
+            - manage-categories
+            - manage-deals
+            - manage-prices
+            - manage-orders
+            - manage-prices
+            - manage-properties
+            - manage-shipping-methods
+            - manage-stocks
+            - manage-stores
 
 ```shell script
 php artisan vendor:publish --tag="ecommerce.routes"

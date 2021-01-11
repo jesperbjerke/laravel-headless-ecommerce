@@ -185,7 +185,6 @@ class Product extends BreadModel implements HasMedia
             'brand',
             'categories',
             'stores',
-            'propertyValues',
             'variations'
         ], true));
     }

@@ -44,7 +44,7 @@ class Stock extends BreadModel
         $this->addFieldInt(
             'incoming_quantity',
             Lang::get('ecommerce::fields.incoming_quantity'),
-            self::$FIELD_REQUIRED,
+            self::$FIELD_OPTIONAL,
             [
                 'default' => 0,
                 'description' => Lang::get('ecommerce::fields.descriptions.incoming_quantity')
@@ -53,7 +53,7 @@ class Stock extends BreadModel
         $this->addFieldInt(
             'outgoing_quantity',
             Lang::get('ecommerce::fields.outgoing_quantity'),
-            self::$FIELD_REQUIRED,
+            self::$FIELD_OPTIONAL,
             [
                 'default' => 0,
                 'description' => Lang::get('ecommerce::fields.descriptions.outgoing_quantity')

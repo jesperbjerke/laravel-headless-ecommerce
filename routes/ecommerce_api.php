@@ -26,8 +26,8 @@ Route::group(['prefix' => 'products'], static function () {
 
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-products'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-products'
         ]
     ], static function () {
         Route::post('', [config('ecommerce.controllers.product'), 'create']);
@@ -49,8 +49,8 @@ Route::group(['prefix' => 'brands'], static function () {
 
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-brands'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-brands'
         ]
     ], static function () {
         Route::post('', [config('ecommerce.controllers.brand'), 'create']);
@@ -72,8 +72,8 @@ Route::group(['prefix' => 'categories'], static function () {
 
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-categories'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-categories'
         ]
     ], static function () {
         Route::post('', [config('ecommerce.controllers.category'), 'create']);
@@ -90,8 +90,8 @@ Route::group(['prefix' => 'categories'], static function () {
 Route::group(['prefix' => 'deals'], static function () {
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-deals'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-deals'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.deal'), 'definition']);
@@ -117,8 +117,8 @@ Route::group(['prefix' => 'orders'], static function () {
 
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-orders'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-orders'
         ]
     ], static function () {
         Route::get('', [config('ecommerce.controllers.order'), 'index']);
@@ -136,8 +136,8 @@ Route::group(['prefix' => 'orders'], static function () {
 Route::group(['prefix' => 'prices'], static function () {
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-prices'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-prices'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.price'), 'definition']);
@@ -166,8 +166,8 @@ Route::group(['prefix' => 'carts'], static function () {
 Route::group(['prefix' => 'property-groups'], static function () {
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-properties'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-properties'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.property_group'), 'definition']);
@@ -189,8 +189,8 @@ Route::group(['prefix' => 'property-groups'], static function () {
 Route::group(['prefix' => 'properties'], static function () {
     Route::group([
     'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-properties'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-properties'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.property'), 'definition']);
@@ -212,8 +212,8 @@ Route::group(['prefix' => 'properties'], static function () {
 Route::group(['prefix' => 'property-values'], static function () {
     Route::group([
     'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-properties'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-properties'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.property_value'), 'definition']);
@@ -233,8 +233,8 @@ Route::group(['prefix' => 'property-values'], static function () {
 Route::group(['prefix' => 'shipping-methods'], static function () {
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-shipping-methods'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-shipping-methods'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.shipping_method'), 'definition']);
@@ -256,8 +256,8 @@ Route::group(['prefix' => 'shipping-methods'], static function () {
 Route::group(['prefix' => 'stocks'], static function () {
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-stocks'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-stocks'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.stock'), 'definition']);
@@ -281,8 +281,8 @@ Route::group(['prefix' => 'stores'], static function () {
 
     Route::group([
         'middleware' => [
-            // config('ecommerce.routing.auth.middleware'),
-            // 'can:manage-stores'
+            config('ecommerce.routing.auth.middleware'),
+            'can:manage-stores'
         ]
     ], static function () {
         Route::get('definition', [config('ecommerce.controllers.store'), 'definition']);

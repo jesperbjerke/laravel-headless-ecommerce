@@ -13,6 +13,8 @@ return [
     */
 
     'id' => 'ID',
+    'related_id' => 'Relaterad ID',
+    'related_type' => 'Relaterad typ',
     'sku' => 'SKU',
     'email' => 'Email',
     'name' => 'Namn',

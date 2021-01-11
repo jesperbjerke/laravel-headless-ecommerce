@@ -14,18 +14,17 @@ class Price extends BreadModel
 {
     protected function define(): void
     {
-        $this->addFieldHasOne(
-            'product',
-            Lang::get('ecommerce::models.product.singular'),
+        $this->addFieldInt('priceable_id', Lang::get('ecommerce::fields.related_id'), self::$FIELD_REQUIRED);
+        $this->addFieldSelect(
+            'priceable_type',
+            Lang::get('ecommerce::fields.related_type'),
             self::$FIELD_REQUIRED,
-            'name,sku',
-            null,
             [
-                'extra_data' => [
-                    'prefetch' => true,
-                    'display_field' => 'name',
-                    'extra_display_field' => 'sku'
-                ]
+                'product' => Lang::get('ecommerce::models.product.singular'),
+                'shipping_method' => Lang::get('ecommerce::models.shipping_method.singular')
+            ],
+            [
+                'default' => 'product'
             ]
         );
 
