@@ -28,7 +28,9 @@ return [
         'deal' => Bjerke\Ecommerce\Models\Deal::class,
         'order' => Bjerke\Ecommerce\Models\Order::class,
         'order_item' => Bjerke\Ecommerce\Models\OrderItem::class,
+        'order_log' => Bjerke\Ecommerce\Models\OrderLog::class,
         'shipping_method' => Bjerke\Ecommerce\Models\ShippingMethod::class,
+        'payment_log' => Bjerke\Ecommerce\Models\PaymentLog::class,
     ],
 
     /*
@@ -187,6 +189,19 @@ return [
         |
         */
         'trigger_expiring_event_after' => env('CART_TRIGGER_EXPIRING_EVENT_AFTER', 60)
+    ],
+
+    'orders' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Order logs time to live
+        |--------------------------------------------------------------------------
+        |
+        | Specify the length of time (in days) that the order logs should be kept
+        | Is only used in the command `ecommerce:clean-order-logs`
+        |
+        */
+        'log_ttl' => env('ORDER_LOG_TTL', 365)
     ],
 
     /*

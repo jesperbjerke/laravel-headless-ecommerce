@@ -4,6 +4,7 @@ namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Exceptions\CorruptCartPricing;
+use Bjerke\Ecommerce\Exceptions\InvalidCartItemProduct;
 use Bjerke\Ecommerce\Exceptions\InvalidCartItemQuantity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -38,9 +39,13 @@ class CartItem extends BreadModel
         return $this->calculateTotals($this->cart->currency, $this->cart->store_id);
     }
 
-    public function calculateTotals(string $currency, int $storeId = null): array
+    public function getActivePrice(string $currency, int $storeId = null): Price
     {
-        $this->loadMissing(['product.activeDeals', 'product.prices']);
+        $this->loadMissing(['product.prices']);
+
+        if (!$this->product) {
+            throw new InvalidCartItemProduct();
+        }
 
         /* @var $price Price|null */
         $price = $this->product->prices
@@ -52,15 +57,27 @@ class CartItem extends BreadModel
             throw new CorruptCartPricing();
         }
 
-        return $price->calculateTotals($this->quantity);
+        return $price;
     }
 
-    public function validateContents(string $currency, int $storeId = null)
+    public function calculateTotals(string $currency, int $storeId = null): array
+    {
+        $this->loadMissing(['product.activeDeals']);
+        return $this->getActivePrice($currency, $storeId)->calculateTotals($this->quantity);
+    }
+
+    public function validateContents(string $currency, int $storeId = null): bool
     {
         $this->loadMissing(['product.stocks', 'product.prices']);
 
+        if (!$this->product) {
+            throw new InvalidCartItemProduct();
+        }
+
         self::validateStock($this->product, $this->quantity, $storeId);
         self::validatePricing($this->product, $currency, $storeId);
+
+        return true;
     }
 
     public static function validateStock(Product $product, int $quantity, int $storeId = null): bool

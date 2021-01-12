@@ -11,21 +11,22 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignId('store_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('store_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignUuid('cart_id')->nullable()->constrained()->onDelete('set null');
 
             $table->unsignedBigInteger('order_value');
             $table->unsignedBigInteger('order_vat_value');
 
-            $table->smallInteger('status');
-            $table->smallInteger('payment_status');
+            $table->tinyInteger('status')->unsigned();
+            $table->tinyInteger('paid_status')->unsigned();
 
             $table->string('currency');
             $table->string('locale');
 
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('company')->nullable();
-            $table->string('email');
+            $table->string('email')->nullable();
 
             $table->json('billing_address')->nullable();
             $table->json('shipping_address')->nullable();

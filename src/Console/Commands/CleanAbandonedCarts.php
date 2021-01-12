@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CleanAbandonedCarts extends Command
 {
-    protected $signature = 'ecommerce:clean-abandoned-carts';
+    protected $signature = 'ecommerce:clean-abandoned-carts {--older-than=}';
 
-    protected $description = 'Deletes all expired carts';
+    protected $description = 'Deletes all expired carts older than --older-than (number of minutes) option or ecommerce.cart.ttl from config';
 
     public function handle(): void
     {
-        $ttl = Carbon::now()->subMinutes(config('ecommerce.cart.ttl'));
+        $ttlOption = $this->option('older-than') ?: config('ecommerce.cart.ttl');
+        $ttl = Carbon::now()->subMinutes((int) $ttlOption);
         Cart::where('updated_at', '<', $ttl)->chunk(100, function (Collection $collection) {
             $collection->each(fn(Cart $cart) => $cart->delete());
         });

@@ -4,10 +4,12 @@ namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Enums\OrderStatus;
-use Bjerke\Ecommerce\Enums\PaymentStatus;
+use Bjerke\Ecommerce\Enums\PaidStatus;
+use Bjerke\Ecommerce\Exceptions\OrderNotEditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 
@@ -95,5 +97,65 @@ class Order extends BreadModel
     public function shippingMethod(): BelongsTo
     {
         return $this->belongsTo(config('ecommerce.models.shipping_method'));
+    }
+
+    public static function createFromCart($cartId): Order
+    {
+        $order = new Order();
+        $order->status = OrderStatus::DRAFT;
+        $order->paid_status = PaidStatus::UNPAID;
+
+        return $order->updateFromCart($cartId);
+    }
+
+    public function updateFromCart($cartId): Order
+    {
+        if (
+            $this->status !== OrderStatus::DRAFT ||
+            $this->paid_status !== PaidStatus::UNPAID
+        ) {
+            throw new OrderNotEditable();
+        }
+
+        /* @var $cart Cart */
+        $cart = Cart::with([
+            'cartItems.product.stocks',
+            'cartItems.product.prices',
+            'cartItems.product.activeDeals'
+        ])->whereHas('cartItems')->findOrFail($cartId);
+
+        $cart->validateCart();
+        $cart->touch();
+
+        $this->validateOnSave = false;
+
+        $this->currency = $cart->currency;
+        $this->store_id = $cart->store_id;
+        $this->order_value = $cart->totals['total'];
+        $this->order_vat_value = $cart->totals['total'] - $cart->totals['total_ex_vat'];
+        $this->cart_id = $cart->id;
+
+        $this->save();
+
+        $this->validateOnSave = true;
+
+        $this->orderItems->each(fn(OrderItem $orderItem) => $orderItem->delete());
+        $cart->cartItems->each(function (CartItem $cartItem) use ($cart) {
+            $this->orderItems()->create([
+                'name' => $cartItem->product->name,
+                'reference' => $cartItem->product->sku,
+                'product_id' => $cartItem->product_id,
+                'value' => $cartItem->totals['total'],
+                'discount_value' => $cartItem->totals['original_total'] - $cartItem->totals['total'],
+                'vat_value' => $cartItem->totals['total'] - $cartItem->totals['total_ex_vat'],
+                'unit_value' => (isset($cartItem->totals['unit'])) ?
+                    $cartItem->totals['unit']['total'] :
+                    $cartItem->totals['total'],
+                'vat_percentage' => $cartItem->getActivePrice($cart->currency, $cart->store_id)->vat_percentage,
+                'quantity' => $cartItem->quantity
+            ]);
+        });
+
+        return $this;
     }
 }

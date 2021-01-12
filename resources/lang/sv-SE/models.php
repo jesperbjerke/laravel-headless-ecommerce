@@ -86,10 +86,18 @@ return [
         'plural' => 'Order rader'
     ],
 
+    'order_log' => [
+        'singular' => 'Order logg',
+        'plural' => 'Order loggar'
+    ],
+
     'shipping_method' => [
         'singular' => 'Leveransalternativ',
         'plural' => 'Leveransalternativ'
     ],
 
-
+    'payment_log' => [
+        'singular' => 'Betalnignslogg',
+        'plural' => 'Betalningsloggar'
+    ],
 ];

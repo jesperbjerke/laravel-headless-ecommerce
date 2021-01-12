@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateOrderLogsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('order_logs', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('order_id')->nullable()->constrained()->onDelete('cascade');
+            $table->tinyInteger('type')->unsigned();
+            $table->json('meta')->nullable();
+
+            $table->timestamps();
+        });
+    }
+}

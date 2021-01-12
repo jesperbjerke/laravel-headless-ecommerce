@@ -86,9 +86,18 @@ return [
         'plural' => 'Order items'
     ],
 
+    'order_log' => [
+        'singular' => 'Order log',
+        'plural' => 'Order logs'
+    ],
+
     'shipping_method' => [
         'singular' => 'Shipping method',
         'plural' => 'Shipping methods'
     ],
 
+    'payment_log' => [
+        'singular' => 'Payment log',
+        'plural' => 'Payment logs'
+    ],
 ];

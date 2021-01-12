@@ -66,6 +66,10 @@ Models can be overridden with your own versions. Just extend the original ones a
 
 ### Orders
 
+### Order logs
+    - Optional schedule to remove old order logs
+    - Optional schedule to remove old payment logs
+
 ### Shipping
 
 ### Payments
@@ -77,6 +81,8 @@ Models can be overridden with your own versions. Just extend the original ones a
 ### Commands
     - ecommerce:clean-abandoned-carts
     - ecommerce:check-expiring-carts
+    - ecommerce:clean-order-logs
+    - ecommerce:clean-payment-logs
 
 ### Events
     - CartExpiring

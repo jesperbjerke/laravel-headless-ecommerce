@@ -12,8 +12,10 @@ return [
     */
 
     'invalid_cart_item_quantity' => 'Angivet antal är mer än vad som finns tillgängligt',
+    'invalid_cart_item_product' => 'Produkten finns inte längre tillgänglig',
     'corrupt_cart_pricing' => 'Varukorgens innehåll stämmer inte överens med tillgänliga priser',
     'invalid_deal' => 'Angivet erbjudande kunde int appliceras',
     'cart_has_expired' => 'Varukorgen är inte längre giltig',
-    'product_invalid' => 'Produkten är ej giltig'
+    'product_invalid' => 'Produkten är ej giltig',
+    'order_not_editable' => 'Ordern är inte redigerbar'
 ];

@@ -1,7 +1,10 @@
 <?php
 
 use Bjerke\Ecommerce\Enums\DealDiscountType;
+use Bjerke\Ecommerce\Enums\OrderLogType;
 use Bjerke\Ecommerce\Enums\OrderStatus;
+use Bjerke\Ecommerce\Enums\PaidStatus;
+use Bjerke\Ecommerce\Enums\PaymentLogType;
 use Bjerke\Ecommerce\Enums\PaymentStatus;
 use Bjerke\Ecommerce\Enums\ProductStatus;
 use Bjerke\Ecommerce\Enums\ProductType;
@@ -38,5 +41,29 @@ return [
         PaymentStatus::FAILED => 'Failed',
         PaymentStatus::PARTIALLY_REFUNDED => 'Partially refunded',
         PaymentStatus::REFUNDED => 'Refunded'
+    ],
+    'paid_status' => [
+        PaidStatus::UNPAID => 'Unpaid',
+        PaidStatus::PARTIALLY_PAID => 'Partially paid',
+        PaidStatus::PAID => 'Paid',
+    ],
+    'payment_log_type' => [
+        PaymentLogType::CREATED => 'Created',
+        PaymentLogType::FAILED => 'Failed',
+        PaymentLogType::COMPLETED => 'Completed',
+        PaymentLogType::REFUND_CREATED => 'Refund created',
+        PaymentLogType::REFUND_FAILED => 'Refund failed',
+        PaymentLogType::REFUND_COMPLETED => 'Refund completed'
+    ],
+    'order_log_type' => [
+        OrderLogType::CREATED => 'Created',
+        OrderLogType::UPDATED => 'Updated',
+        OrderLogType::ITEM_ADDED => 'Order item added',
+        OrderLogType::ITEM_REMOVED => 'Order item removed',
+        OrderLogType::ITEM_UPDATED => 'Order item updated',
+        OrderLogType::STOCK_RESERVED => 'Stock reserved',
+        OrderLogType::STOCK_RELEASED => 'Reserved stock released',
+        OrderLogType::STOCK_CONFIRMED => 'Reserved stock confirmed',
+        OrderLogType::STOCK_RETURNED => 'Stock returned'
     ]
 ];

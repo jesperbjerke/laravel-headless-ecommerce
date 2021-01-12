@@ -4,7 +4,10 @@ namespace Bjerke\Ecommerce;
 
 use Bjerke\Ecommerce\Console\Commands\CheckExpiringCarts;
 use Bjerke\Ecommerce\Console\Commands\CleanAbandonedCarts;
+use Bjerke\Ecommerce\Console\Commands\CleanOrderLogs;
+use Bjerke\Ecommerce\Console\Commands\CleanPaymentLogs;
 use Bjerke\Ecommerce\Observers\CategoryProductObserver;
+use Bjerke\Ecommerce\Observers\OrderItemObserver;
 use Bjerke\Ecommerce\Observers\OrderObserver;
 use Bjerke\Ecommerce\Observers\ProductObserver;
 use Bjerke\Ecommerce\Observers\StockObserver;
@@ -38,7 +41,9 @@ class EcommerceServiceProvider extends ServiceProvider
 
         $this->commands([
             CheckExpiringCarts::class,
-            CleanAbandonedCarts::class
+            CleanAbandonedCarts::class,
+            CleanOrderLogs::class,
+            CleanPaymentLogs::class
         ]);
     }
 
@@ -63,6 +68,9 @@ class EcommerceServiceProvider extends ServiceProvider
 
         $orderModel = config('ecommerce.models.order');
         $orderModel::observe(OrderObserver::class);
+
+        $orderItemModel = config('ecommerce.models.order_item');
+        $orderItemModel::observe(OrderItemObserver::class);
     }
 
     private function registerRoutes()
@@ -247,6 +255,22 @@ class EcommerceServiceProvider extends ServiceProvider
             $this->publishes([
                 $baseMigrationPath . 'create_order_items_table.php.stub' => database_path(
                     $basePublishFilename . '19_create_order_items_table.php'
+                )
+            ], $publishGroup);
+        }
+
+        if (!class_exists('CreateOrderLogsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_order_logs_table.php.stub' => database_path(
+                    $basePublishFilename . '20_create_order_logs_table.php'
+                )
+            ], $publishGroup);
+        }
+
+        if (!class_exists('CreatePaymentLogsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_payment_logs_table.php.stub' => database_path(
+                    $basePublishFilename . '21_create_payment_logs_table.php'
                 )
             ], $publishGroup);
         }

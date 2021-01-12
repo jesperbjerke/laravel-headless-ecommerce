@@ -12,8 +12,6 @@ class CreateOrderItemsTable extends Migration
             $table->id();
             $table->foreignUuid('order_id')->constrained()->onDelete('cascade');
 
-            $table->smallInteger('payment_status');
-
             $table->string('name');
             $table->string('reference');
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null');

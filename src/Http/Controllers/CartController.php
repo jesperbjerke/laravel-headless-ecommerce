@@ -29,6 +29,8 @@ class CartController extends BreadController
         $cart = parent::view($request, $id, $applyQuery);
         $cart->validateCart();
 
+        $cart->touch();
+
         return $cart;
     }
 
@@ -38,7 +40,7 @@ class CartController extends BreadController
         return parent::create($request, $with, $manualAttributes, $beforeSave);
     }
 
-    public function addCartItem(Request $request, int $id)
+    public function addCartItem(Request $request, $id)
     {
         Cart::mergeAppends(['totals']);
         CartItem::mergeAppends(['totals']);
@@ -106,6 +108,55 @@ class CartController extends BreadController
                 'quantity' => $validatedData['quantity']
             ]);
         }
+
+        return $cart->refresh();
+    }
+
+    public function updateCartItem(Request $request, $id, $itemId)
+    {
+        Cart::mergeAppends(['totals']);
+        CartItem::mergeAppends(['totals']);
+
+        $cart = Cart::with('cartItems.products.stocks')->whereHas(
+            'cartItems',
+            function (Builder $query) use ($itemId) {
+                $query->where('id', $itemId);
+            }
+        )->findOrFail($id);
+
+        $validatedData = (Validator::make(RequestParams::getParams($request), [
+            'quantity' => [
+                'required',
+                'int'
+            ]
+        ]))->validate();
+
+        /* @var $existingItem CartItem */
+        $existingItem = $cart->cartItems->findOrFail($itemId);
+        $newQuantity = $existingItem->quantity + $validatedData['quantity'];
+        CartItem::validateStock($existingItem->product, $newQuantity);
+
+        $existingItem->quantity = $newQuantity;
+        $existingItem->save();
+
+        return $cart->refresh();
+    }
+
+    public function deleteCartItem(Request $request, $id, $itemId)
+    {
+        Cart::mergeAppends(['totals']);
+        CartItem::mergeAppends(['totals']);
+
+        $cart = Cart::with('cartItems.products.stocks')->whereHas(
+            'cartItems',
+            function (Builder $query) use ($itemId) {
+                $query->where('id', $itemId);
+            }
+        )->findOrFail($id);
+
+        /* @var $existingItem CartItem */
+        $existingItem = $cart->cartItems->findOrFail($itemId);
+        $existingItem->delete();
 
         return $cart->refresh();
     }
