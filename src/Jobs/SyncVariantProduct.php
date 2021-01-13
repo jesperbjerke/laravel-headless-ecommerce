@@ -64,7 +64,7 @@ class SyncVariantProduct implements ShouldQueue, ShouldBeUnique
         ) {
             $this->variation->variantProduct->prices()->delete();
             $this->product->prices->each(
-                fn(Price $price) => $this->variation->variantProduct->prices()->save($price->replicate())
+                fn (Price $price) => $this->variation->variantProduct->prices()->save($price->replicate())
             );
         }
 
@@ -80,7 +80,7 @@ class SyncVariantProduct implements ShouldQueue, ShouldBeUnique
                                         ->where('property_id', '!=', $this->variation->property_id)
                                         ->get();
             $properties->each(
-                fn(Property $property) =>
+                fn (Property $property) =>
                 $this->variation->variantProduct->propertyValues()->save($property->replicate())
             );
         }

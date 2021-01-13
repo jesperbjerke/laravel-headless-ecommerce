@@ -10,7 +10,7 @@ trait UsesImages
     public function transformImagesResponse($collectionName = 'images'): MediaCollection
     {
         return $this->getMedia($collectionName)->transform(
-            static fn(Media $image) => [
+            static fn (Media $image) => [
                 'id' => $image->id,
                 'name' => $image->name,
                 'file_name' => $image->file_name,

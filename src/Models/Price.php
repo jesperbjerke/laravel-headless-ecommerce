@@ -97,7 +97,7 @@ class Price extends BreadModel
     {
         return $this->product->activeDeals
             ->where('currency', $this->currency)
-            ->when($this->store_id, fn(Collection $deals) => $deals->where('store_id', $this->store_id));
+            ->when($this->store_id, fn (Collection $deals) => $deals->where('store_id', $this->store_id));
     }
 
     public function calculateTotals(int $quantity = 1, $includeDeals = true): array

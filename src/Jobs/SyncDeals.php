@@ -68,7 +68,7 @@ class SyncDeals implements ShouldQueue
         $dealQuery->chunkById(50, function (Collection $deals) {
             /* @var $syncDealProductsJob SyncDealProducts */
             $syncDealProductsJob = config('ecommerce.jobs.sync_deal_products');
-            $deals->each(fn(Deal $deal) => $syncDealProductsJob::dispatch($deal));
+            $deals->each(fn (Deal $deal) => $syncDealProductsJob::dispatch($deal));
         });
     }
 }

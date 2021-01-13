@@ -17,5 +17,6 @@ return [
     'invalid_deal' => 'The provided deal could not be applied',
     'cart_has_expired' => 'Cart has expired',
     'product_invalid' => 'Product is invalid',
-    'order_not_editable' => 'Order is not in an editable state'
+    'order_not_editable' => 'Order is not in an editable state',
+    'invalid_stock_quantity' => 'The stock quantity is invalid',
 ];

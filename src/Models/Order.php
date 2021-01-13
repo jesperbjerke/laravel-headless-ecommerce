@@ -47,7 +47,7 @@ class Order extends BreadModel
             Lang::get('ecommerce::fields.billing_address'),
             self::$FIELD_OPTIONAL,
             false,
-            fn(Order $order) => self::defineAddressFields($order)
+            fn (Order $order) => self::defineAddressFields($order)
         );
 
         $this->addFieldJSON(
@@ -55,7 +55,7 @@ class Order extends BreadModel
             Lang::get('ecommerce::fields.billing_address'),
             self::$FIELD_OPTIONAL,
             false,
-            fn(Order $order) => self::defineAddressFields($order)
+            fn (Order $order) => self::defineAddressFields($order)
         );
 
         $this->addFieldHasOne(
@@ -139,7 +139,7 @@ class Order extends BreadModel
 
         $this->validateOnSave = true;
 
-        $this->orderItems->each(fn(OrderItem $orderItem) => $orderItem->delete());
+        $this->orderItems->each(fn (OrderItem $orderItem) => $orderItem->delete());
         $cart->cartItems->each(function (CartItem $cartItem) use ($cart) {
             $this->orderItems()->create([
                 'name' => $cartItem->product->name,

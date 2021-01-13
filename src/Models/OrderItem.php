@@ -3,6 +3,8 @@
 namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
+use Bjerke\Ecommerce\Enums\OrderLogType;
+use Bjerke\Ecommerce\Exceptions\InvalidStockQuantity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends BreadModel
@@ -33,7 +35,7 @@ class OrderItem extends BreadModel
         return $this->belongsTo(config('ecommerce.models.product'));
     }
 
-    public function getStock(): Stock
+    public function getStockAttribute(): Stock
     {
         return Stock::where('product_id', $this->product_id)
                     ->where('store_id', $this->order->store_id)
@@ -42,32 +44,182 @@ class OrderItem extends BreadModel
 
     public function reserveStock()
     {
-        $stock = $this->getStock();
+        $stock = $this->stock;
+
+        // Validate stock can be released
+        $orderLogs = OrderLog::where('order_id', $this->order_id)
+                             ->where('type', [
+                                 OrderLogType::STOCK_RESERVED,
+                                 OrderLogType::STOCK_RELEASED,
+                                 OrderLogType::STOCK_CONFIRMED,
+                                 OrderLogType::STOCK_RETURNED
+                             ])
+                             ->where('meta->order_item_id', $this->id)
+                             ->where('meta->stock_id', $stock->id)
+                             ->get();
+
+        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
+                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
+            OrderLogType::STOCK_RELEASED,
+            OrderLogType::STOCK_CONFIRMED,
+            OrderLogType::STOCK_RETURNED,
+        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        if (
+            $unconfirmedQuantity !== $this->quantity ||
+            $stock->available_quantity < $this->quantity
+        ) {
+            throw new InvalidStockQuantity();
+        }
+
         $stock->outgoing_quantity += $this->quantity;
         $stock->current_quantity -= $this->quantity;
         $stock->save();
+
+        OrderLog::create([
+            'order_id' => $this->order_id,
+            'type' => OrderLogType::STOCK_RESERVED,
+            'meta' => [
+                'stock_id' => $stock->id,
+                'order_item_id' => $this->id,
+                'quantity' => $this->quantity
+            ]
+        ]);
     }
 
     public function releaseReservedStock()
     {
-        $stock = $this->getStock();
+        $stock = $this->stock;
+
+        // Validate stock can be released
+        $orderLogs = OrderLog::where('order_id', $this->order_id)
+                             ->where('type', [
+                                 OrderLogType::STOCK_RESERVED,
+                                 OrderLogType::STOCK_RELEASED,
+                                 OrderLogType::STOCK_CONFIRMED,
+                                 OrderLogType::STOCK_RETURNED
+                             ])
+                             ->where('meta->order_item_id', $this->id)
+                             ->where('meta->stock_id', $stock->id)
+                             ->get();
+
+        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
+                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
+            OrderLogType::STOCK_RELEASED,
+            OrderLogType::STOCK_CONFIRMED,
+            OrderLogType::STOCK_RETURNED,
+        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        if (
+            $unconfirmedQuantity !== $this->quantity ||
+            $stock->outgoing_quantity < $this->quantity
+        ) {
+            throw new InvalidStockQuantity();
+        }
+
         $stock->outgoing_quantity -= $this->quantity;
         $stock->current_quantity += $this->quantity;
         $stock->save();
+
+        OrderLog::create([
+            'order_id' => $this->order_id,
+            'type' => OrderLogType::STOCK_RELEASED,
+            'meta' => [
+                'stock_id' => $stock->id,
+                'order_item_id' => $this->id,
+                'quantity' => $this->quantity
+            ]
+        ]);
     }
 
     public function confirmReservedStock()
     {
-        $stock = $this->getStock();
+        $stock = $this->stock;
+
+        // Validate stock can be confirmed
+        $orderLogs = OrderLog::where('order_id', $this->order_id)
+                             ->where('type', [
+                                 OrderLogType::STOCK_RESERVED,
+                                 OrderLogType::STOCK_RELEASED,
+                                 OrderLogType::STOCK_CONFIRMED,
+                                 OrderLogType::STOCK_RETURNED
+                             ])
+                             ->where('meta->order_item_id', $this->id)
+                             ->where('meta->stock_id', $stock->id)
+                             ->get();
+
+        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
+                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
+            OrderLogType::STOCK_RELEASED,
+            OrderLogType::STOCK_CONFIRMED,
+            OrderLogType::STOCK_RETURNED,
+        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        if (
+            $unconfirmedQuantity !== $this->quantity ||
+            $stock->outgoing_quantity < $this->quantity
+        ) {
+            throw new InvalidStockQuantity();
+        }
+
         $stock->outgoing_quantity -= $this->quantity;
         $stock->save();
+
+        OrderLog::create([
+            'order_id' => $this->order_id,
+            'type' => OrderLogType::STOCK_CONFIRMED,
+            'meta' => [
+                'stock_id' => $stock->id,
+                'order_item_id' => $this->id,
+                'quantity' => $this->quantity
+            ]
+        ]);
     }
 
     public function returnStock($quantity = null)
     {
         $returnQuantity = $quantity ?: $this->quantity;
-        $stock = $this->getStock();
+        $stock = $this->stock;
+
+        // Validate stock can be returned
+        $orderLogs = OrderLog::where('order_id', $this->order_id)
+                             ->where('type', [
+                                 OrderLogType::STOCK_CONFIRMED,
+                                 OrderLogType::STOCK_RETURNED
+                             ])
+                             ->where('meta->order_item_id', $this->id)
+                             ->where('meta->stock_id', $stock->id)
+                             ->get();
+
+        $confirmedSum = $orderLogs->where('type', OrderLogType::STOCK_CONFIRMED)
+                                  ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $returnedSum = $orderLogs->where('type', OrderLogType::STOCK_RETURNED)
+                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+
+        $remainingQuantity = $confirmedSum - $returnedSum;
+
+        if ($remainingQuantity < $returnQuantity) {
+            throw new InvalidStockQuantity();
+        }
+
+        // Update stock
         $stock->current_quantity += ($this->quantity >= $returnQuantity) ? $returnQuantity : $this->quantity;
         $stock->save();
+
+        OrderLog::create([
+            'order_id' => $this->order_id,
+            'type' => OrderLogType::STOCK_RETURNED,
+            'meta' => [
+                'stock_id' => $stock->id,
+                'order_item_id' => $this->id,
+                'quantity' => $returnQuantity
+            ]
+        ]);
     }
 }

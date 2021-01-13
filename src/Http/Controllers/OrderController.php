@@ -13,10 +13,16 @@ class OrderController extends BreadController
         $this->modelName = config('ecommerce.models.order');
     }
 
-    public function createFromCart(Request $request, $cartId): Order
+    public function createFromCart(Request $request, string $cartId): Order
     {
         $order = Order::createFromCart($cartId);
         $order->loadMissing('orderItems');
         return $order;
+    }
+
+    public function updateFromCart(Request $request, string $orderId, string $cartId): Order
+    {
+        $order = Order::findOrFail($orderId);
+        return $order->updateFromCart($cartId)->refresh()->loadMissing('orderItems');
     }
 }

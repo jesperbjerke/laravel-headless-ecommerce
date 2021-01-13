@@ -18,7 +18,7 @@ class CleanAbandonedCarts extends Command
         $ttlOption = $this->option('older-than') ?: config('ecommerce.cart.ttl');
         $ttl = Carbon::now()->subMinutes((int) $ttlOption);
         Cart::where('updated_at', '<', $ttl)->chunk(100, function (Collection $collection) {
-            $collection->each(fn(Cart $cart) => $cart->delete());
+            $collection->each(fn (Cart $cart) => $cart->delete());
         });
     }
 }

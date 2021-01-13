@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Lang;
 
 class Stock extends BreadModel
 {
+    protected $appends = [
+        'available_quantity'
+    ];
+
     protected function define(): void
     {
         $this->addFieldHasOne(
@@ -77,5 +81,10 @@ class Stock extends BreadModel
     public function store(): BelongsTo
     {
         return $this->belongsTo(config('ecommerce.models.store'));
+    }
+
+    public function getAvailableQuantityAttribute(): int
+    {
+        return ($this->current_quantity - $this->outgoing_quantity) ?: 0;
     }
 }

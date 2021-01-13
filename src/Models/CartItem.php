@@ -87,7 +87,7 @@ class CartItem extends BreadModel
             ->where('store_id', $storeId)
             ->first();
 
-        $availableStock = ($stock) ? ($stock->current_quantity - $stock->outgoing_quantity) : 0;
+        $availableStock = ($stock) ? $stock->available_quantity : 0;
         if ($availableStock < $quantity) {
             throw new InvalidCartItemQuantity();
         }

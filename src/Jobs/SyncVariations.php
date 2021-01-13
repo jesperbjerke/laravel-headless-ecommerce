@@ -39,7 +39,7 @@ class SyncVariations implements ShouldQueue, ShouldBeUnique
         /* @var $syncVariantProductJob SyncVariantProduct */
         $syncVariantProductJob = config('ecommerce.jobs.sync_variant_product');
 
-        $variations->each(fn(Variation $variation) => $syncVariantProductJob::dispatch($variation, $this->product));
+        $variations->each(fn (Variation $variation) => $syncVariantProductJob::dispatch($variation, $this->product));
 
         $this->product->refresh();
 
@@ -47,7 +47,7 @@ class SyncVariations implements ShouldQueue, ShouldBeUnique
             /* @var $syncVariationsJob SyncVariations */
             $syncVariationsJob = config('ecommerce.jobs.sync_variations');
             $variations->each(
-                fn(Variation $variation) => $syncVariationsJob::dispatch($variation->variantProduct, true)
+                fn (Variation $variation) => $syncVariationsJob::dispatch($variation->variantProduct, true)
             );
         }
     }

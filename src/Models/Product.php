@@ -299,7 +299,7 @@ class Product extends BreadModel implements HasMedia
 
         $mappedTranslations = SearchHelper::transformTranslatables(array_filter(
             $this->getTranslations(),
-            static fn($key) => in_array($key, $translatableFields, true),
+            static fn ($key) => in_array($key, $translatableFields, true),
             ARRAY_FILTER_USE_KEY
         ));
 
@@ -371,10 +371,10 @@ class Product extends BreadModel implements HasMedia
             $variantProduct->{$relation}()->syncWithoutDetaching($this->{$relation}()->pluck('id'));
         }
 
-        $this->prices->each(fn(Price $price) => $variantProduct->prices()->save($price->replicate()));
+        $this->prices->each(fn (Price $price) => $variantProduct->prices()->save($price->replicate()));
 
         $properties = $this->propertyValues()->where('property_id', '!=', $propertyId)->get();
-        $properties->each(fn(Property $property) => $variantProduct->propertyValues()->save($property->replicate()));
+        $properties->each(fn (Property $property) => $variantProduct->propertyValues()->save($property->replicate()));
 
         $variantPropertyValue = $variantProduct->propertyValues()->create([
             'property_id' => $propertyId,
@@ -382,7 +382,7 @@ class Product extends BreadModel implements HasMedia
         ]);
 
         $media = $this->media()->get();
-        $media->each(fn(Media $media) => $media->copy($variantProduct, $media->collection_name, $media->disk));
+        $media->each(fn (Media $media) => $media->copy($variantProduct, $media->collection_name, $media->disk));
 
         $variationModel = config('ecommerce.models.variation');
         $variation = new $variationModel();

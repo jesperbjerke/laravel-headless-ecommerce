@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'products'], static function () {
     Route::get('definition', [config('ecommerce.controllers.product'), 'definition']);
 
-    Route::get('', [config('ecommerce.controllers.product'), 'index']);
     Route::get('{id}', [config('ecommerce.controllers.product'), 'view']);
+    Route::get('', [config('ecommerce.controllers.product'), 'index']);
 
     Route::group([
         'middleware' => [
@@ -113,7 +113,8 @@ Route::group(['prefix' => 'orders'], static function () {
     Route::get('definition', [config('ecommerce.controllers.order'), 'definition']);
 
     Route::get('{id}', [config('ecommerce.controllers.order'), 'view']);
-    Route::patch('{id}', [config('ecommerce.controllers.order'), 'update']);
+    Route::post('from-cart/{cartId}', [config('ecommerce.controllers.order'), 'createFromCart']);
+    Route::patch('{orderId}/from-cart/{cartId}', [config('ecommerce.controllers.order'), 'updateFromCart']);
 
     Route::group([
         'middleware' => [

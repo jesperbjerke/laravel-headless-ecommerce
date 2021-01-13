@@ -22,7 +22,7 @@ class OrderItemObserver
         OrderLog::create([
             'order_id' => $orderItem->order_id,
             'type' => OrderLogType::ITEM_UPDATED,
-            'meta' => $orderItem->attributesToArray()
+            'meta' => $orderItem->getChanges()
         ]);
     }
 
@@ -30,8 +30,10 @@ class OrderItemObserver
     {
         OrderLog::create([
             'order_id' => $orderItem->order_id,
-            'type' => OrderLogType::ITEM_UPDATED,
-            'meta' => $orderItem->attributesToArray()
+            'type' => OrderLogType::ITEM_REMOVED,
+            'meta' => [
+                'id' => $orderItem->id
+            ]
         ]);
     }
 }

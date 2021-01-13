@@ -9,7 +9,7 @@ trait UsesFiles
     public function getFilesAttribute(): \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection
     {
         return $this->getMedia('files')->transform(
-            static fn(Media $file) => [
+            static fn (Media $file) => [
                 'id' => $file->id,
                 'name' => $file->name,
                 'file_name' => $file->file_name,

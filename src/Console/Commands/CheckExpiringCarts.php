@@ -18,7 +18,7 @@ class CheckExpiringCarts extends Command
     {
         $ttl = Carbon::now()->subMinutes(config('ecommerce.cart.trigger_expiring_event_after'));
         Cart::where('updated_at', '<', $ttl)->chunk(100, function (Collection $collection) {
-            $collection->each(fn(Cart $cart) => CartExpiring::dispatch($cart));
+            $collection->each(fn (Cart $cart) => CartExpiring::dispatch($cart));
         });
     }
 }
