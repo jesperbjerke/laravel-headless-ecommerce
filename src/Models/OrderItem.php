@@ -4,6 +4,8 @@ namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Enums\OrderLogType;
+use Bjerke\Ecommerce\Enums\StockLogTrigger;
+use Bjerke\Ecommerce\Enums\StockLogType;
 use Bjerke\Ecommerce\Exceptions\InvalidStockQuantity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -46,47 +48,36 @@ class OrderItem extends BreadModel
     {
         $stock = $this->stock;
 
-        // Validate stock can be released
-        $orderLogs = OrderLog::where('order_id', $this->order_id)
-                             ->where('type', [
-                                 OrderLogType::STOCK_RESERVED,
-                                 OrderLogType::STOCK_RELEASED,
-                                 OrderLogType::STOCK_CONFIRMED,
-                                 OrderLogType::STOCK_RETURNED
-                             ])
-                             ->where('meta->order_item_id', $this->id)
-                             ->where('meta->stock_id', $stock->id)
-                             ->get();
+        // Validate stock is not already reserved
+        $reservedSum = StockLog::where('stock_id', $stock->id)
+                             ->where('type', StockLogType::RESERVED)
+                             ->where('reference->order_id', $this->order_id)
+                             ->where('reference->order_item_id', $this->id)
+                             ->sum('quantity');
 
-        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
-                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
-
-        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
-            OrderLogType::STOCK_RELEASED,
-            OrderLogType::STOCK_CONFIRMED,
-            OrderLogType::STOCK_RETURNED,
-        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $quantityToReserve = ($this->quantity - $reservedSum);
 
         if (
-            $unconfirmedQuantity !== $this->quantity ||
-            $stock->available_quantity < $this->quantity
+            $reservedSum >= $this->quantity ||
+            $stock->available_quantity < $quantityToReserve
         ) {
             throw new InvalidStockQuantity();
         }
 
-        $stock->outgoing_quantity += $this->quantity;
-        $stock->current_quantity -= $this->quantity;
+        $stock->outgoing_quantity += $quantityToReserve;
+        $stock->current_quantity -= $quantityToReserve;
         $stock->save();
 
-        OrderLog::create([
-            'order_id' => $this->order_id,
-            'type' => OrderLogType::STOCK_RESERVED,
-            'meta' => [
-                'stock_id' => $stock->id,
-                'order_item_id' => $this->id,
-                'quantity' => $this->quantity
-            ]
-        ]);
+        StockLog::create([
+             'type' => StockLogType::RESERVED,
+             'trigger' => StockLogTrigger::ORDER_ITEM,
+             'stock_id' => $stock->id,
+             'reference' => [
+                 'order_id' => $this->order_id,
+                 'order_item_id' => $this->id
+             ],
+             'quantity' => $quantityToReserve
+         ]);
     }
 
     public function releaseReservedStock()
@@ -94,25 +85,19 @@ class OrderItem extends BreadModel
         $stock = $this->stock;
 
         // Validate stock can be released
-        $orderLogs = OrderLog::where('order_id', $this->order_id)
-                             ->where('type', [
-                                 OrderLogType::STOCK_RESERVED,
-                                 OrderLogType::STOCK_RELEASED,
-                                 OrderLogType::STOCK_CONFIRMED,
-                                 OrderLogType::STOCK_RETURNED
-                             ])
-                             ->where('meta->order_item_id', $this->id)
-                             ->where('meta->stock_id', $stock->id)
+        $stockLogs = StockLog::where('stock_id', $stock->id)
+                             ->where('reference->order_id', $this->order_id)
+                             ->where('reference->order_item_id', $this->id)
                              ->get();
 
-        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
-                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $reservedSum = $stockLogs->where('type', StockLogType::RESERVED)
+                                 ->sum('quantity');
 
-        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
-            OrderLogType::STOCK_RELEASED,
-            OrderLogType::STOCK_CONFIRMED,
-            OrderLogType::STOCK_RETURNED,
-        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $unconfirmedQuantity = $reservedSum - $stockLogs->where('type', [
+            StockLogType::RELEASED,
+            StockLogType::CONFIRMED,
+            StockLogType::RETURNED,
+        ])->sum('quantity');
 
         if (
             $unconfirmedQuantity !== $this->quantity ||
@@ -125,14 +110,15 @@ class OrderItem extends BreadModel
         $stock->current_quantity += $this->quantity;
         $stock->save();
 
-        OrderLog::create([
-            'order_id' => $this->order_id,
-            'type' => OrderLogType::STOCK_RELEASED,
-            'meta' => [
-                'stock_id' => $stock->id,
-                'order_item_id' => $this->id,
-                'quantity' => $this->quantity
-            ]
+        StockLog::create([
+            'type' => StockLogType::RELEASED,
+            'trigger' => StockLogTrigger::ORDER_ITEM,
+            'stock_id' => $stock->id,
+            'reference' => [
+                'order_id' => $this->order_id,
+                'order_item_id' => $this->id
+            ],
+            'quantity' => $this->quantity
         ]);
     }
 
@@ -141,25 +127,19 @@ class OrderItem extends BreadModel
         $stock = $this->stock;
 
         // Validate stock can be confirmed
-        $orderLogs = OrderLog::where('order_id', $this->order_id)
-                             ->where('type', [
-                                 OrderLogType::STOCK_RESERVED,
-                                 OrderLogType::STOCK_RELEASED,
-                                 OrderLogType::STOCK_CONFIRMED,
-                                 OrderLogType::STOCK_RETURNED
-                             ])
-                             ->where('meta->order_item_id', $this->id)
-                             ->where('meta->stock_id', $stock->id)
+        $stockLogs = StockLog::where('stock_id', $stock->id)
+                             ->where('reference->order_id', $this->order_id)
+                             ->where('reference->order_item_id', $this->id)
                              ->get();
 
-        $reservedSum = $orderLogs->where('type', OrderLogType::STOCK_RESERVED)
-                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $reservedSum = $stockLogs->where('type', StockLogType::RESERVED)
+                                 ->sum('quantity');
 
-        $unconfirmedQuantity = $reservedSum - $orderLogs->where('type', [
-            OrderLogType::STOCK_RELEASED,
-            OrderLogType::STOCK_CONFIRMED,
-            OrderLogType::STOCK_RETURNED,
-        ])->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $unconfirmedQuantity = $reservedSum - $stockLogs->where('type', [
+            StockLogType::RELEASED,
+            StockLogType::CONFIRMED,
+            StockLogType::RETURNED,
+        ])->sum('quantity');
 
         if (
             $unconfirmedQuantity !== $this->quantity ||
@@ -171,14 +151,15 @@ class OrderItem extends BreadModel
         $stock->outgoing_quantity -= $this->quantity;
         $stock->save();
 
-        OrderLog::create([
-            'order_id' => $this->order_id,
-            'type' => OrderLogType::STOCK_CONFIRMED,
-            'meta' => [
-                'stock_id' => $stock->id,
-                'order_item_id' => $this->id,
-                'quantity' => $this->quantity
-            ]
+        StockLog::create([
+            'type' => StockLogType::CONFIRMED,
+            'trigger' => StockLogTrigger::ORDER_ITEM,
+            'stock_id' => $stock->id,
+            'reference' => [
+                'order_id' => $this->order_id,
+                'order_item_id' => $this->id
+            ],
+            'quantity' => $this->quantity
         ]);
     }
 
@@ -188,19 +169,19 @@ class OrderItem extends BreadModel
         $stock = $this->stock;
 
         // Validate stock can be returned
-        $orderLogs = OrderLog::where('order_id', $this->order_id)
+        $stockLogs = StockLog::where('stock_id', $stock->id)
                              ->where('type', [
-                                 OrderLogType::STOCK_CONFIRMED,
-                                 OrderLogType::STOCK_RETURNED
+                                 StockLogType::CONFIRMED,
+                                 StockLogType::RETURNED
                              ])
-                             ->where('meta->order_item_id', $this->id)
-                             ->where('meta->stock_id', $stock->id)
+                             ->where('reference->order_id', $this->order_id)
+                             ->where('reference->order_item_id', $this->id)
                              ->get();
 
-        $confirmedSum = $orderLogs->where('type', OrderLogType::STOCK_CONFIRMED)
-                                  ->sum(fn (OrderLog $log) => $log->meta['quantity']);
-        $returnedSum = $orderLogs->where('type', OrderLogType::STOCK_RETURNED)
-                                 ->sum(fn (OrderLog $log) => $log->meta['quantity']);
+        $confirmedSum = $stockLogs->where('type', StockLogType::CONFIRMED)
+                                  ->sum('quantity');
+        $returnedSum = $stockLogs->where('type', StockLogType::RETURNED)
+                                 ->sum('quantity');
 
         $remainingQuantity = $confirmedSum - $returnedSum;
 
@@ -212,14 +193,15 @@ class OrderItem extends BreadModel
         $stock->current_quantity += ($this->quantity >= $returnQuantity) ? $returnQuantity : $this->quantity;
         $stock->save();
 
-        OrderLog::create([
-            'order_id' => $this->order_id,
-            'type' => OrderLogType::STOCK_RETURNED,
-            'meta' => [
-                'stock_id' => $stock->id,
-                'order_item_id' => $this->id,
-                'quantity' => $returnQuantity
-            ]
+        StockLog::create([
+            'type' => StockLogType::RETURNED,
+            'trigger' => StockLogTrigger::ORDER_ITEM,
+            'stock_id' => $stock->id,
+            'reference' => [
+                'order_id' => $this->order_id,
+                'order_item_id' => $this->id
+            ],
+            'quantity' => $returnQuantity
         ]);
     }
 }

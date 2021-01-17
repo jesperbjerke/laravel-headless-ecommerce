@@ -194,10 +194,18 @@ class EcommerceServiceProvider extends ServiceProvider
             ], $publishGroup);
         }
 
+        if (!class_exists('CreateStockLogsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_stock_logs_table.php.stub' => database_path(
+                    $basePublishFilename . '12_create_stock_logs_table.php'
+                )
+            ], $publishGroup);
+        }
+
         if (!class_exists('CreateCartsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_carts_table.php.stub' => database_path(
-                    $basePublishFilename . '12_create_carts_table.php'
+                    $basePublishFilename . '13_create_carts_table.php'
                 )
             ], $publishGroup);
         }
@@ -205,7 +213,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateCartItemsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_cart_items_table.php.stub' => database_path(
-                    $basePublishFilename . '13_create_cart_items_table.php'
+                    $basePublishFilename . '14_create_cart_items_table.php'
                 )
             ], $publishGroup);
         }
@@ -213,7 +221,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateDealsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_deals_table.php.stub' => database_path(
-                    $basePublishFilename . '14_create_deals_table.php'
+                    $basePublishFilename . '15_create_deals_table.php'
                 )
             ], $publishGroup);
         }
@@ -221,7 +229,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateDealablesTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_dealables_table.php.stub' => database_path(
-                    $basePublishFilename . '15_create_dealables_table.php'
+                    $basePublishFilename . '16_create_dealables_table.php'
                 )
             ], $publishGroup);
         }
@@ -229,7 +237,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateDealProductTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_deal_product_table.php.stub' => database_path(
-                    $basePublishFilename . '16_create_deal_product_table.php'
+                    $basePublishFilename . '17_create_deal_product_table.php'
                 )
             ], $publishGroup);
         }
@@ -238,7 +246,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateShippingMethodsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_shipping_methods_table.php.stub' => database_path(
-                    $basePublishFilename . '17_create_shipping_methods_table.php'
+                    $basePublishFilename . '18_create_shipping_methods_table.php'
                 )
             ], $publishGroup);
         }
@@ -246,7 +254,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateOrdersTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_orders_table.php.stub' => database_path(
-                    $basePublishFilename . '18_create_orders_table.php'
+                    $basePublishFilename . '19_create_orders_table.php'
                 )
             ], $publishGroup);
         }
@@ -254,7 +262,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateOrderItemsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_order_items_table.php.stub' => database_path(
-                    $basePublishFilename . '19_create_order_items_table.php'
+                    $basePublishFilename . '20_create_order_items_table.php'
                 )
             ], $publishGroup);
         }
@@ -262,7 +270,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreateOrderLogsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_order_logs_table.php.stub' => database_path(
-                    $basePublishFilename . '20_create_order_logs_table.php'
+                    $basePublishFilename . '21_create_order_logs_table.php'
                 )
             ], $publishGroup);
         }
@@ -270,7 +278,7 @@ class EcommerceServiceProvider extends ServiceProvider
         if (!class_exists('CreatePaymentLogsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_payment_logs_table.php.stub' => database_path(
-                    $basePublishFilename . '21_create_payment_logs_table.php'
+                    $basePublishFilename . '22_create_payment_logs_table.php'
                 )
             ], $publishGroup);
         }

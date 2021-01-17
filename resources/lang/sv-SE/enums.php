@@ -8,6 +8,8 @@ use Bjerke\Ecommerce\Enums\PaymentLogType;
 use Bjerke\Ecommerce\Enums\PaymentStatus;
 use Bjerke\Ecommerce\Enums\ProductStatus;
 use Bjerke\Ecommerce\Enums\ProductType;
+use Bjerke\Ecommerce\Enums\StockLogTrigger;
+use Bjerke\Ecommerce\Enums\StockLogType;
 
 return [
     'product_status' => [
@@ -60,10 +62,15 @@ return [
         OrderLogType::UPDATED => 'Uppdaterad',
         OrderLogType::ITEM_ADDED => 'Orderrad tillagd',
         OrderLogType::ITEM_REMOVED => 'Orderrad borttagen',
-        OrderLogType::ITEM_UPDATED => 'Orderrad uppdaterad',
-        OrderLogType::STOCK_RESERVED => 'Lager reserverat',
-        OrderLogType::STOCK_RELEASED => 'Reserverat lager släppt',
-        OrderLogType::STOCK_CONFIRMED => 'Reserverat lager bekräftat',
-        OrderLogType::STOCK_RETURNED => 'Lager återfört'
+        OrderLogType::ITEM_UPDATED => 'Orderrad uppdaterad'
     ],
+    'stock_log_type' => [
+        StockLogType::RESERVED => 'Lager reserverat',
+        StockLogType::RELEASED => 'Reserverat lager släppt',
+        StockLogType::CONFIRMED => 'Reserverat lager bekräftat',
+        StockLogType::RETURNED => 'Lager återfört'
+    ],
+    'stock_log_trigger' => [
+        StockLogTrigger::ORDER_ITEM => 'Orderrad'
+    ]
 ];

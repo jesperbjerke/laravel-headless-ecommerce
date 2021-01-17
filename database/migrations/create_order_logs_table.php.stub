@@ -11,7 +11,7 @@ class CreateOrderLogsTable extends Migration
         Schema::create('order_logs', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('order_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignUuid('order_id')->nullable()->constrained()->onDelete('cascade');
             $table->tinyInteger('type')->unsigned();
             $table->json('meta')->nullable();
 

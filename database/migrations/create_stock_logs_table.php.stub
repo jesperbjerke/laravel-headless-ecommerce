@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateStockLogsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('stock_logs', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('stock_id')->nullable()->constrained()->onDelete('cascade');
+            $table->tinyInteger('type')->unsigned();
+            $table->tinyInteger('trigger')->unsigned();
+            $table->integer('quantity')->unsigned();
+            $table->json('reference')->nullable();
+
+            $table->timestamps();
+        });
+    }
+}

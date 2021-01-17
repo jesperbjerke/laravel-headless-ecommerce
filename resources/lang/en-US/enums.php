@@ -8,6 +8,8 @@ use Bjerke\Ecommerce\Enums\PaymentLogType;
 use Bjerke\Ecommerce\Enums\PaymentStatus;
 use Bjerke\Ecommerce\Enums\ProductStatus;
 use Bjerke\Ecommerce\Enums\ProductType;
+use Bjerke\Ecommerce\Enums\StockLogTrigger;
+use Bjerke\Ecommerce\Enums\StockLogType;
 
 return [
     'product_status' => [
@@ -60,10 +62,15 @@ return [
         OrderLogType::UPDATED => 'Updated',
         OrderLogType::ITEM_ADDED => 'Order item added',
         OrderLogType::ITEM_REMOVED => 'Order item removed',
-        OrderLogType::ITEM_UPDATED => 'Order item updated',
-        OrderLogType::STOCK_RESERVED => 'Stock reserved',
-        OrderLogType::STOCK_RELEASED => 'Reserved stock released',
-        OrderLogType::STOCK_CONFIRMED => 'Reserved stock confirmed',
-        OrderLogType::STOCK_RETURNED => 'Stock returned'
+        OrderLogType::ITEM_UPDATED => 'Order item updated'
+    ],
+    'stock_log_type' => [
+        StockLogType::RESERVED => 'Stock reserved',
+        StockLogType::RELEASED => 'Reserved stock released',
+        StockLogType::CONFIRMED => 'Reserved stock confirmed',
+        StockLogType::RETURNED => 'Stock returned'
+    ],
+    'stock_log_trigger' => [
+        StockLogTrigger::ORDER_ITEM => 'Order item'
     ]
 ];

@@ -23,7 +23,7 @@ class CreateOrderItemsTable extends Migration
             $table->unsignedBigInteger('unit_value');
             $table->decimal('vat_percentage', 4, 3)->unsigned()->nullable();
 
-            $table->smallInteger('quantity')->unsigned();
+            $table->integer('quantity')->unsigned();
 
             $table->json('meta')->nullable();
 

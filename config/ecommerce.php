@@ -31,6 +31,7 @@ return [
         'order_log' => Bjerke\Ecommerce\Models\OrderLog::class,
         'shipping_method' => Bjerke\Ecommerce\Models\ShippingMethod::class,
         'payment_log' => Bjerke\Ecommerce\Models\PaymentLog::class,
+        'stock_log' => Bjerke\Ecommerce\Models\StockLog::class
     ],
 
     /*
@@ -202,6 +203,19 @@ return [
         |
         */
         'log_ttl' => env('ORDER_LOG_TTL', 365)
+    ],
+
+    'stock' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Stock logs time to live
+        |--------------------------------------------------------------------------
+        |
+        | Specify the length of time (in days) that the stock logs should be kept
+        | Is only used in the command `ecommerce:clean-stock-logs`
+        |
+        */
+        'log_ttl' => env('STOCK_LOG_TTL', 365)
     ],
 
     /*

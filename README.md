@@ -50,6 +50,7 @@ Models can be overridden with your own versions. Just extend the original ones a
     - Multiple stock types / stores (web, shops etc)
     - Current stock / Incoming stock / Outgoing stock
     - Low stock event
+    - Optional schedule to remove old stock logs
 
 ### Categories
     - Laravel Nested Set
@@ -82,6 +83,7 @@ Models can be overridden with your own versions. Just extend the original ones a
     - ecommerce:clean-abandoned-carts
     - ecommerce:check-expiring-carts
     - ecommerce:clean-order-logs
+    - ecommerce:clean-stock-logs
     - ecommerce:clean-payment-logs
 
 ### Events
