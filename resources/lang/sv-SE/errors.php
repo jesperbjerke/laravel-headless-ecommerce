@@ -18,5 +18,6 @@ return [
     'cart_has_expired' => 'Varukorgen är inte längre giltig',
     'product_invalid' => 'Produkten är ej giltig',
     'order_not_editable' => 'Ordern är inte redigerbar',
-    'invalid_stock_quantity' => 'Lagerantalet är ej giltigt'
+    'invalid_stock_quantity' => 'Lagerantalet är ej giltigt',
+    'exchange_rates_failed' => 'Kunde inte räkna ut växlingskurs'
 ];

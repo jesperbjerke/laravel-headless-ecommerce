@@ -43,6 +43,7 @@ Models can be overridden with your own versions. Just extend the original ones a
 ### Prices
     - MoneyPHP
     - VAT
+    - Optinally sync prices against exchange rate by running the SynPrices job on schedule (otherwise it will only update if the base price changes)
 
 ### Deals
 

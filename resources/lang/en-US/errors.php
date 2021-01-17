@@ -19,4 +19,5 @@ return [
     'product_invalid' => 'Product is invalid',
     'order_not_editable' => 'Order is not in an editable state',
     'invalid_stock_quantity' => 'The stock quantity is invalid',
+    'exchange_rates_failed' => 'Could not determine exchange rates'
 ];

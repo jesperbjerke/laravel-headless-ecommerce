@@ -3,11 +3,16 @@
 namespace Bjerke\Ecommerce\Helpers;
 
 use Bjerke\Ecommerce\Enums\DealDiscountType;
+use Bjerke\Ecommerce\Exceptions\ExchangeRatesFailed;
 use Bjerke\Ecommerce\Models\Deal;
 use Bjerke\Ecommerce\Models\Price;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Money\Converter;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
+use Money\Exchange\FixedExchange;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
 
@@ -94,5 +99,39 @@ class PriceHelper
                 'original_total_ex_vat' => $moneyFormatter->format($originalTotalExVat)
             ]
         ];
+    }
+
+    public static function getExchangeRates(): array
+    {
+        return Cache::remember(
+            'ecommerce.exchange_rates',
+            Carbon::now()->addDay(),
+            static function () {
+                $response = Http::withHeaders([
+                    'api-key' => config('ecommerce.currencies.exchange_api_key')
+                ])->get('https://api.xchangeapi.com/latest', [
+                    'base' => config('ecommerce.currencies.default')
+                ]);
+
+                if ($response->failed()) {
+                    throw new ExchangeRatesFailed();
+                }
+
+                return $response->json();
+            }
+        );
+    }
+
+    public static function getConvertedValue(Money $baseValue, string $convertToCurrency): Money
+    {
+        $exchangeRates = self::getExchangeRates();
+
+        $exchange = new FixedExchange([
+            $exchangeRates['base'] => $exchangeRates['rates']
+        ]);
+
+        $converter = new Converter(new ISOCurrencies(), $exchange);
+
+        return $converter->convert($baseValue, new Currency($convertToCurrency));
     }
 }

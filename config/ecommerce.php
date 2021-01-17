@@ -47,6 +47,7 @@ return [
         'sync_deal_products' => Bjerke\Ecommerce\Jobs\SyncDealProducts::class,
         'sync_variations' => Bjerke\Ecommerce\Jobs\SyncVariations::class,
         'sync_variant_product' => Bjerke\Ecommerce\Jobs\SyncVariantProduct::class,
+        'sync_prices' => Bjerke\Ecommerce\Jobs\SyncPrices::class
     ],
 
     'media' => [
@@ -135,7 +136,18 @@ return [
         | prices from the default currency to the other supported currencies
         |
         */
-        'auto_conversion' => env('USE_AUTO_CURRENCY_CONVERSION', true)
+        'auto_conversion' => env('USE_AUTO_CURRENCY_CONVERSION', true),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Exchange API key (xchangeapi.com)
+        |--------------------------------------------------------------------------
+        |
+        | Define your api key to use from xchangeapi.com to be able to use
+        | auto currency conversion
+        |
+        */
+        'exchange_api_key' => env('CURRENCY_EXCHANGE_API_KEY')
     ],
 
     'pricing' => [

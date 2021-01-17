@@ -9,6 +9,7 @@ use Bjerke\Ecommerce\Console\Commands\CleanPaymentLogs;
 use Bjerke\Ecommerce\Observers\CategoryProductObserver;
 use Bjerke\Ecommerce\Observers\OrderItemObserver;
 use Bjerke\Ecommerce\Observers\OrderObserver;
+use Bjerke\Ecommerce\Observers\PriceObserver;
 use Bjerke\Ecommerce\Observers\ProductObserver;
 use Bjerke\Ecommerce\Observers\StockObserver;
 use Bjerke\Ecommerce\Observers\VariationObserver;
@@ -71,6 +72,12 @@ class EcommerceServiceProvider extends ServiceProvider
 
         $orderItemModel = config('ecommerce.models.order_item');
         $orderItemModel::observe(OrderItemObserver::class);
+
+        $orderItemModel = config('ecommerce.models.order_item');
+        $orderItemModel::observe(OrderItemObserver::class);
+
+        $priceModel = config('ecommerce.models.price');
+        $priceModel::observe(PriceObserver::class);
     }
 
     private function registerRoutes()
