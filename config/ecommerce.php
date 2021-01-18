@@ -30,8 +30,9 @@ return [
         'order_item' => Bjerke\Ecommerce\Models\OrderItem::class,
         'order_log' => Bjerke\Ecommerce\Models\OrderLog::class,
         'shipping_method' => Bjerke\Ecommerce\Models\ShippingMethod::class,
-        'payment_log' => Bjerke\Ecommerce\Models\PaymentLog::class,
-        'stock_log' => Bjerke\Ecommerce\Models\StockLog::class
+        'stock_log' => Bjerke\Ecommerce\Models\StockLog::class,
+        'payment' => Bjerke\Ecommerce\Models\Payment::class,
+        'payment_log' => Bjerke\Ecommerce\Models\PaymentLog::class
     ],
 
     /*
@@ -215,6 +216,67 @@ return [
         |
         */
         'log_ttl' => env('ORDER_LOG_TTL', 365)
+    ],
+
+    'payments' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Omnipay gateway to use
+        |--------------------------------------------------------------------------
+        |
+        | See more about available gateways and their implementations here:
+        | https://github.com/thephpleague/omnipay
+        |
+        */
+        'gateway' => env('PAYMENT_GATEWAY'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Omnipay gateway options
+        |--------------------------------------------------------------------------
+        |
+        | These options will be passed down to the `initialize` method
+        | on the gateway
+        |
+        */
+        'gateway_options' => [
+            'testMode' => env('APP_DEBUG', true)
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Omnipay return url
+        |--------------------------------------------------------------------------
+        |
+        | Where to redirect the customer following a transaction
+        |
+        */
+        'return_url' => env('PAYMENT_RETURN_URL'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Omnipay cancel url
+        |--------------------------------------------------------------------------
+        |
+        | Where to redirect the customer upon cancelling a transaction
+        |
+        */
+        'cancel_url' => env('PAYMENT_CANCEL_URL'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Omnipay notify url
+        |--------------------------------------------------------------------------
+        |
+        | Where the payment provider should send their server-to-server
+        | notification, informing the Merchant Site about the outcome
+        | of a transaction.
+        |
+        | Defaults to the route payments/callback and taking into account your
+        | app url and routing prefix etc.
+        |
+        */
+        'notify_url' => env('PAYMENT_NOTIFY_URL', 'payments/callback')
     ],
 
     'stock' => [

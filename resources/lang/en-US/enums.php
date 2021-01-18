@@ -46,7 +46,6 @@ return [
     ],
     'paid_status' => [
         PaidStatus::UNPAID => 'Unpaid',
-        PaidStatus::PARTIALLY_PAID => 'Partially paid',
         PaidStatus::PAID => 'Paid',
     ],
     'payment_log_type' => [

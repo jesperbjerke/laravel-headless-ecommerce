@@ -46,7 +46,6 @@ return [
     ],
     'paid_status' => [
         PaidStatus::UNPAID => 'Obetald',
-        PaidStatus::PARTIALLY_PAID => 'Delvis betald',
         PaidStatus::PAID => 'Betald',
     ],
     'payment_log_type' => [

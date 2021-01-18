@@ -3,6 +3,8 @@
 namespace Bjerke\Ecommerce\Http\Controllers;
 
 use Bjerke\Bread\Http\Controllers\BreadController;
+use Bjerke\Ecommerce\Enums\OrderStatus;
+use Bjerke\Ecommerce\Enums\PaidStatus;
 use Bjerke\Ecommerce\Models\Order;
 use Illuminate\Http\Request;
 
@@ -24,5 +26,14 @@ class OrderController extends BreadController
     {
         $order = Order::findOrFail($orderId);
         return $order->updateFromCart($cartId)->refresh()->loadMissing('orderItems');
+    }
+
+    public function confirm(Request $request, string $id)
+    {
+        $order = Order::where('status', OrderStatus::DRAFT)
+                      ->where('paid_status', '!=', PaidStatus::PAID)
+                      ->findOrFail($id);
+
+
     }
 }

@@ -18,6 +18,9 @@ return [
     'cart_has_expired' => 'Cart has expired',
     'product_invalid' => 'Product is invalid',
     'order_not_editable' => 'Order is not in an editable state',
+    'order_not_in_a_payable_state' => 'Order is not in a payable state',
     'invalid_stock_quantity' => 'The stock quantity is invalid',
-    'exchange_rates_failed' => 'Could not determine exchange rates'
+    'exchange_rates_failed' => 'Could not determine exchange rates',
+    'missing_billing_or_shipping' => 'Neither billing or shipping is set on the order',
+    'payment_failed' => 'Payment failed'
 ];

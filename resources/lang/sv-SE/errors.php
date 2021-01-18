@@ -18,6 +18,9 @@ return [
     'cart_has_expired' => 'Varukorgen är inte längre giltig',
     'product_invalid' => 'Produkten är ej giltig',
     'order_not_editable' => 'Ordern är inte redigerbar',
+    'order_not_in_a_payable_state' => 'Ordern är inte redo att betalas',
     'invalid_stock_quantity' => 'Lagerantalet är ej giltigt',
-    'exchange_rates_failed' => 'Kunde inte räkna ut växlingskurs'
+    'exchange_rates_failed' => 'Kunde inte räkna ut växlingskurs',
+    'missing_billing_or_shipping' => 'Varken fakturaadders eller leveransadress finns på ordern',
+    'payment_failed' => 'Betalningen misslyckades'
 ];

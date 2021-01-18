@@ -282,10 +282,18 @@ class EcommerceServiceProvider extends ServiceProvider
             ], $publishGroup);
         }
 
+        if (!class_exists('CreatePaymentsTable')) {
+            $this->publishes([
+                $baseMigrationPath . 'create_payments_table.php.stub' => database_path(
+                    $basePublishFilename . '22_create_payments_table.php'
+                )
+            ], $publishGroup);
+        }
+
         if (!class_exists('CreatePaymentLogsTable')) {
             $this->publishes([
                 $baseMigrationPath . 'create_payment_logs_table.php.stub' => database_path(
-                    $basePublishFilename . '22_create_payment_logs_table.php'
+                    $basePublishFilename . '23_create_payment_logs_table.php'
                 )
             ], $publishGroup);
         }
