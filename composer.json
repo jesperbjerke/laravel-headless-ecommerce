@@ -47,7 +47,10 @@
         "laravel": {
             "providers": [
                 "Bjerke\\Ecommerce\\EcommerceServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "PriceHelper": "Bjerke\\Ecommerce\\Facades\\PriceHelper"
+            }
         }
     },
     "minimum-stability": "dev",

@@ -3,7 +3,7 @@
 namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
-use Bjerke\Ecommerce\Helpers\PriceHelper;
+use Bjerke\Ecommerce\Facades\PriceHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

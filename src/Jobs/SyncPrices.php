@@ -2,7 +2,7 @@
 
 namespace Bjerke\Ecommerce\Jobs;
 
-use Bjerke\Ecommerce\Helpers\PriceHelper;
+use Bjerke\Ecommerce\Facades\PriceHelper;
 use Bjerke\Ecommerce\Models\Price;
 use Bjerke\Ecommerce\Models\Product;
 use Bjerke\Ecommerce\Models\ShippingMethod;
