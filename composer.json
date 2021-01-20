@@ -49,7 +49,8 @@
                 "Bjerke\\Ecommerce\\EcommerceServiceProvider"
             ],
             "aliases": {
-                "PriceHelper": "Bjerke\\Ecommerce\\Facades\\PriceHelper"
+                "PriceHelper": "Bjerke\\Ecommerce\\Facades\\PriceHelper",
+                "PaymentHelper": "Bjerke\\Ecommerce\\Facades\\PaymentHelper"
             }
         }
     },

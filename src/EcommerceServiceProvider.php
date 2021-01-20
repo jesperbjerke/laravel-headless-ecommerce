@@ -6,6 +6,7 @@ use Bjerke\Ecommerce\Console\Commands\CheckExpiringCarts;
 use Bjerke\Ecommerce\Console\Commands\CleanAbandonedCarts;
 use Bjerke\Ecommerce\Console\Commands\CleanOrderLogs;
 use Bjerke\Ecommerce\Console\Commands\CleanPaymentLogs;
+use Bjerke\Ecommerce\Helpers\PaymentHelper;
 use Bjerke\Ecommerce\Helpers\PriceHelper;
 use Bjerke\Ecommerce\Observers\CategoryProductObserver;
 use Bjerke\Ecommerce\Observers\OrderItemObserver;
@@ -54,6 +55,7 @@ class EcommerceServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/ecommerce.php', 'ecommerce');
 
         $this->app->bind('price.helper', fn ($app) => new PriceHelper());
+        $this->app->bind('payment.helper', fn ($app) => new PaymentHelper());
     }
 
     private function registerObservers(): void
