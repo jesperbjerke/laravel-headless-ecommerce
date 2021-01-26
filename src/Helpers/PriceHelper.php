@@ -6,6 +6,7 @@ use Bjerke\Ecommerce\Enums\DealDiscountType;
 use Bjerke\Ecommerce\Exceptions\ExchangeRatesFailed;
 use Bjerke\Ecommerce\Models\Deal;
 use Bjerke\Ecommerce\Models\Price;
+use Bjerke\Ecommerce\Models\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -62,7 +63,9 @@ class PriceHelper
             return $valid;
         }
 
-        return $deal->applicableProducts()->where('id', $price->product_id)->exists();
+        return ($price->priceable instanceof Product) ?
+            $deal->applicableProducts()->where('id', $price->priceable_id)->exists() :
+            false;
     }
 
     public static function applyDeal(Money $price, Deal $deal): Money
@@ -105,7 +108,7 @@ class PriceHelper
     {
         return Cache::remember(
             'ecommerce.exchange_rates',
-            Carbon::now()->addDay(),
+            Carbon::now()->addHour(),
             static function () {
                 $response = Http::withHeaders([
                     'api-key' => config('ecommerce.currencies.exchange_api_key')

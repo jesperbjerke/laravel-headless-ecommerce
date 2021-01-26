@@ -22,5 +22,7 @@ return [
     'invalid_stock_quantity' => 'Lagerantalet är ej giltigt',
     'exchange_rates_failed' => 'Kunde inte räkna ut växlingskurs',
     'missing_billing_or_shipping' => 'Varken fakturaadders eller leveransadress finns på ordern',
-    'payment_failed' => 'Betalningen misslyckades'
+    'payment_failed' => 'Betalningen misslyckades',
+    'method_not_implemented' => 'Funktionen är inte implementerad',
+    'invalid_shipping_method_price' => 'Ogiltigt pris för angivet leveransalternativ'
 ];

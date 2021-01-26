@@ -116,6 +116,12 @@ Route::group(['prefix' => 'orders'], static function () {
     Route::post('from-cart/{cartId}', [config('ecommerce.controllers.order'), 'createFromCart']);
     Route::patch('{orderId}/from-cart/{cartId}', [config('ecommerce.controllers.order'), 'updateFromCart']);
 
+    Route::post('{id}/checkout', [config('ecommerce.controllers.order'), 'checkout']);
+    Route::patch('{id}/addresses', [config('ecommerce.controllers.order'), 'updateAddresses']);
+    Route::patch('{id}/shipping', [config('ecommerce.controllers.order'), 'updateShipping']);
+    Route::patch('{id}/confirm', [config('ecommerce.controllers.order'), 'confirmPayment']);
+    Route::patch('{id}/cancel', [config('ecommerce.controllers.order'), 'cancelPayment']);
+
     Route::group([
         'middleware' => [
             config('ecommerce.routing.auth.middleware'),
@@ -128,6 +134,8 @@ Route::group(['prefix' => 'orders'], static function () {
         Route::delete('{id}', [config('ecommerce.controllers.order'), 'delete']);
         Route::delete('{id}/detach/{relatedModel}', [config('ecommerce.controllers.order'), 'detach']);
         Route::put('{id}/attach/{relatedModel}', [config('ecommerce.controllers.order'), 'attach']);
+
+        Route::post('{id}/refund', [config('ecommerce.controllers.order'), 'refund']);
     });
 });
 

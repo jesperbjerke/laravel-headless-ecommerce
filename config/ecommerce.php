@@ -197,9 +197,8 @@ return [
         | Trigger expiring cart event after
         |--------------------------------------------------------------------------
         |
-        | Specify the length of time (in minutes) since last update until an "CartExpiring" event
-        | will be triggered.
-        | Defaults to 2 hours.
+        | Specify the length of time (in minutes) since last update until an
+        | "CartExpiring" event will be triggered. Defaults to 2 hours.
         |
         */
         'trigger_expiring_event_after' => env('CART_TRIGGER_EXPIRING_EVENT_AFTER', 60)
@@ -215,7 +214,18 @@ return [
         | Is only used in the command `ecommerce:clean-order-logs`
         |
         */
-        'log_ttl' => env('ORDER_LOG_TTL', 365)
+        'log_ttl' => env('ORDER_LOG_TTL', 365),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Confirm order when paid
+        |--------------------------------------------------------------------------
+        |
+        | Define if the order should be automatically confirmed upon successful
+        | payment. Set this to false if you want manual confirmation flow on orders
+        |
+        */
+        'confirm_on_paid' => env('ORDER_CONFIRM_ON_PAID', true)
     ],
 
     'payments' => [

@@ -93,17 +93,23 @@ class Price extends BreadModel
         return $this->belongsTo(config('ecommerce.models.store'));
     }
 
-    public function applicableDeals(): Collection
+    public function applicableDeals(): ?Collection
     {
-        return $this->product->activeDeals
-            ->where('currency', $this->currency)
-            ->when($this->store_id, fn (Collection $deals) => $deals->where('store_id', $this->store_id));
+        if ($this->priceable instanceof Product) {
+            return $this->product->activeDeals
+                ->where('currency', $this->currency)
+                ->when($this->store_id, fn (Collection $deals) => $deals->where('store_id', $this->store_id));
+        }
+
+        return null;
     }
 
     public function calculateTotals(int $quantity = 1, $includeDeals = true): array
     {
         /* @var $deal Deal|null */
-        $deal = ($includeDeals) ? $this->applicableDeals->latest()->first() : null;
+        $deal = ($includeDeals && ($applicableDeals = $this->applicableDeals)) ?
+            $applicableDeals->latest()->first() :
+            null;
         return PriceHelper::calculateTotals($this, App::getLocale(), $quantity, $deal, false);
     }
 

@@ -41,6 +41,7 @@ return [
         PaymentStatus::PROCESSING => 'Processing',
         PaymentStatus::PAID => 'Paid',
         PaymentStatus::FAILED => 'Failed',
+        PaymentStatus::CANCELLED => 'Cancelled',
         PaymentStatus::PARTIALLY_REFUNDED => 'Partially refunded',
         PaymentStatus::REFUNDED => 'Refunded'
     ],
@@ -51,6 +52,7 @@ return [
     'payment_log_type' => [
         PaymentLogType::CREATED => 'Created',
         PaymentLogType::FAILED => 'Failed',
+        PaymentLogType::CANCELLED => 'Cancelled',
         PaymentLogType::COMPLETED => 'Completed',
         PaymentLogType::REFUND_CREATED => 'Refund created',
         PaymentLogType::REFUND_FAILED => 'Refund failed',

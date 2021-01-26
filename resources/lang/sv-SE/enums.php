@@ -41,6 +41,7 @@ return [
         PaymentStatus::PROCESSING => 'Behandlas',
         PaymentStatus::PAID => 'Betalad',
         PaymentStatus::FAILED => 'Kunde inte betalas',
+        PaymentStatus::CANCELLED => 'Avbruten',
         PaymentStatus::PARTIALLY_REFUNDED => 'Delvis återbetald',
         PaymentStatus::REFUNDED => 'Återbetald'
     ],
@@ -51,6 +52,7 @@ return [
     'payment_log_type' => [
         PaymentLogType::CREATED => 'Skapad',
         PaymentLogType::FAILED => 'Fel',
+        PaymentLogType::CANCELLED => 'Avbruten',
         PaymentLogType::COMPLETED => 'Slutförd',
         PaymentLogType::REFUND_CREATED => 'Återbetalning skapad',
         PaymentLogType::REFUND_FAILED => 'Återbetalning kunde inte genomföras',

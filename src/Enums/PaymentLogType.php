@@ -6,8 +6,9 @@ class PaymentLogType extends BaseEnum
 {
     public const CREATED = 10;
     public const FAILED = 20;
-    public const COMPLETED = 30;
-    public const REFUND_CREATED = 40;
-    public const REFUND_FAILED = 50;
-    public const REFUND_COMPLETED = 60;
+    public const CANCELLED = 30;
+    public const COMPLETED = 40;
+    public const REFUND_CREATED = 50;
+    public const REFUND_FAILED = 60;
+    public const REFUND_COMPLETED = 70;
 }

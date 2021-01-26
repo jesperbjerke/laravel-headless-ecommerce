@@ -3,7 +3,6 @@
 namespace Bjerke\Ecommerce\Models;
 
 use Bjerke\Bread\Models\BreadModel;
-use Bjerke\Ecommerce\Enums\OrderLogType;
 use Bjerke\Ecommerce\Enums\StockLogTrigger;
 use Bjerke\Ecommerce\Enums\StockLogType;
 use Bjerke\Ecommerce\Exceptions\InvalidStockQuantity;
@@ -44,7 +43,7 @@ class OrderItem extends BreadModel
                     ->firstOrFail();
     }
 
-    public function reserveStock()
+    public function reserveStock(): void
     {
         $stock = $this->stock;
 
@@ -80,7 +79,7 @@ class OrderItem extends BreadModel
          ]);
     }
 
-    public function releaseReservedStock()
+    public function releaseReservedStock(): void
     {
         $stock = $this->stock;
 
@@ -122,7 +121,7 @@ class OrderItem extends BreadModel
         ]);
     }
 
-    public function confirmReservedStock()
+    public function confirmReservedStock(): void
     {
         $stock = $this->stock;
 
@@ -163,7 +162,7 @@ class OrderItem extends BreadModel
         ]);
     }
 
-    public function returnStock($quantity = null)
+    public function returnStock($quantity = null): void
     {
         $returnQuantity = $quantity ?: $this->quantity;
         $stock = $this->stock;

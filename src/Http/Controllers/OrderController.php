@@ -10,6 +10,7 @@ use Bjerke\Ecommerce\Facades\PaymentHelper;
 use Bjerke\Ecommerce\Models\Order;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends BreadController
 {
@@ -39,32 +40,49 @@ class OrderController extends BreadController
         });
     }
 
-    public function checkout(Request $request, string $id): ?array
+    public function updateShipping(Request $request, string $id)
     {
         $order = Order::where('status', OrderStatus::DRAFT)
                       ->where('paid_status', '!=', PaidStatus::PAID)
                       ->findOrFail($id);
 
         $params = RequestParams::getParams($request);
+        (Validator::make($params, [
+            'shipping_method_id' => 'nullable|int'
+        ]))->validate();
 
-        $authorizeResponse = PaymentHelper::checkout($order, $params['token'] ?: null);
+        $order->setShippingMethod($params['shipping_method_id'] ?: null);
 
-        if ($authorizeResponse->isRedirect()) {
-            return [
-                'redirect_method' => $authorizeResponse->getRedirectMethod(),
-                'redirect_url' => $authorizeResponse->getRedirectUrl(),
-                'redirect_data' => $authorizeResponse->getRedirectData()
-            ];
-        }
+        return $this->loadFresh($request, $order);
+    }
+
+    public function checkout(Request $request, string $id): ?array
+    {
+        $order = Order::where('status', OrderStatus::DRAFT)
+                      ->where('paid_status', '!=', PaidStatus::PAID)
+                      ->findOrFail($id);
+
+        $order->validate();
+
+        $params = RequestParams::getParams($request);
+        return PaymentHelper::checkout($order, $params['token'] ?: null);
     }
 
     public function confirmPayment(Request $request)
     {
-        return PaymentHelper::initializeGateway()->capture($request->post())->send();
+        return PaymentHelper::confirm($request);
     }
 
     public function cancelPayment(Request $request)
     {
+        return PaymentHelper::cancel($request);
+    }
 
+    public function refund(Request $request, string $id)
+    {
+        $order = Order::where('paid_status', PaidStatus::PAID)
+                      ->findOrFail($id);
+
+        return PaymentHelper::refund($request, $order);
     }
 }

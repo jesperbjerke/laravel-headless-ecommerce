@@ -22,5 +22,7 @@ return [
     'invalid_stock_quantity' => 'The stock quantity is invalid',
     'exchange_rates_failed' => 'Could not determine exchange rates',
     'missing_billing_or_shipping' => 'Neither billing or shipping is set on the order',
-    'payment_failed' => 'Payment failed'
+    'payment_failed' => 'Payment failed',
+    'method_not_implemented' => 'Method not implemented',
+    'invalid_shipping_method_price' => 'Invalid shipping method price'
 ];

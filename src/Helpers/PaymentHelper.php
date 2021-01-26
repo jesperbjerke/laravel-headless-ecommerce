@@ -6,12 +6,14 @@ use Bjerke\Ecommerce\Enums\OrderStatus;
 use Bjerke\Ecommerce\Enums\PaidStatus;
 use Bjerke\Ecommerce\Enums\PaymentLogType;
 use Bjerke\Ecommerce\Enums\PaymentStatus;
+use Bjerke\Ecommerce\Exceptions\MethodNotImplemented;
 use Bjerke\Ecommerce\Exceptions\MissingBillingOrShipping;
 use Bjerke\Ecommerce\Exceptions\OrderNotInAPayableState;
 use Bjerke\Ecommerce\Exceptions\PaymentFailed;
 use Bjerke\Ecommerce\Models\Order;
 use Bjerke\Ecommerce\Models\OrderItem;
 use Bjerke\Ecommerce\Models\Payment;
+use Illuminate\Support\Facades\Request;
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayInterface;
 use Omnipay\Common\Message\ResponseInterface;
@@ -78,31 +80,26 @@ class PaymentHelper
 
     public static function parseAuthorizeResponse(
         ResponseInterface $authorizeResponse,
-        Payment $payment,
-        Order $order
-    ): ResponseInterface {
+        Payment $payment
+    ): array {
         $payment->reference = $authorizeResponse->getTransactionReference();
 
         if (!$authorizeResponse->isSuccessful() && !$authorizeResponse->isRedirect()) {
-            $payment->paymentLogs()->create([
-                'type' => PaymentLogType::FAILED,
-                'meta' => [
-                    'error' => $authorizeResponse->getMessage()
-                ]
-            ]);
-
-            $payment->status = PaymentStatus::FAILED;
-            $payment->save();
-            throw new PaymentFailed($authorizeResponse->getMessage());
+            self::onPaymentFailed($payment, $authorizeResponse->getMessage());
         }
 
         $payment->status = PaymentStatus::PENDING;
         $payment->save();
 
-        $order->status = OrderStatus::PENDING;
-        $order->save();
+        if ($authorizeResponse->isRedirect()) {
+            return [
+                'redirect_method' => $authorizeResponse->getRedirectMethod(),
+                'redirect_url' => $authorizeResponse->getRedirectUrl(),
+                'redirect_data' => $authorizeResponse->getRedirectData()
+            ];
+        }
 
-        return $authorizeResponse;
+        return $authorizeResponse->getData();
     }
 
     public static function setupCardData(Order $order, ?array $additionalCardData = null): CreditCard
@@ -146,8 +143,11 @@ class PaymentHelper
         ?string $token = null,
         ?array $additionalAuthorizeData = null,
         ?array $additionalCardData = null
-    ): ResponseInterface {
+    ): array {
         self::validateOrderCanBePaid($order);
+
+        $order->status = OrderStatus::PENDING;
+        $order->save();
 
         $payment = Payment::create([
             'currency' => $order->currency,
@@ -155,6 +155,7 @@ class PaymentHelper
             'status' => PaymentStatus::PENDING,
             'order_id' => $order->id
         ]);
+        $payment->setRelation('order', $order);
 
         $payment->paymentLogs()->create([
             'type' => PaymentLogType::CREATED
@@ -169,6 +170,71 @@ class PaymentHelper
             $additionalCardData
         );
 
-        return self::parseAuthorizeResponse($authorizeResponse, $payment, $order);
+        return self::parseAuthorizeResponse($authorizeResponse, $payment);
+    }
+
+    public static function confirm(Request $request): array
+    {
+        throw new MethodNotImplemented();
+    }
+
+    public static function cancel(Request $request): array
+    {
+        throw new MethodNotImplemented();
+    }
+
+    public static function refund(Request $request, Order $order): array
+    {
+        throw new MethodNotImplemented();
+    }
+
+    public static function onPaymentConfirmed(Payment $payment): void
+    {
+        $payment->status = PaymentStatus::PAID;
+        $payment->save();
+
+        $payment->paymentLogs()->create([
+            'type' => PaymentLogType::COMPLETED
+        ]);
+
+        if ($payment->order->payments()->sum('value') >= $payment->order->order_value) {
+            if (config('ecommerce.orders.confirm_on_paid')) {
+                $payment->order->status = OrderStatus::CONFIRMED;
+            }
+
+            $payment->order->paid_status = PaidStatus::PAID;
+            $payment->order->save();
+        }
+    }
+
+    public static function onPaymentCancelled(Payment $payment): void
+    {
+        $payment->status = PaymentStatus::CANCELLED;
+        $payment->save();
+
+        $payment->paymentLogs()->create([
+            'type' => PaymentLogType::CANCELLED
+        ]);
+
+        $payment->order->status = OrderStatus::DRAFT;
+        $payment->order->save();
+    }
+
+    public static function onPaymentFailed(Payment $payment, string $errorMessage): void
+    {
+        $payment->paymentLogs()->create([
+            'type' => PaymentLogType::FAILED,
+            'meta' => [
+                'error' => $errorMessage
+            ]
+        ]);
+
+        $payment->status = PaymentStatus::FAILED;
+        $payment->save();
+
+        $payment->order->status = OrderStatus::DRAFT;
+        $payment->order->save();
+
+        throw new PaymentFailed($errorMessage);
     }
 }

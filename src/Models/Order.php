@@ -5,6 +5,7 @@ namespace Bjerke\Ecommerce\Models;
 use Bjerke\Bread\Models\BreadModel;
 use Bjerke\Ecommerce\Enums\OrderStatus;
 use Bjerke\Ecommerce\Enums\PaidStatus;
+use Bjerke\Ecommerce\Exceptions\InvalidShippingMethodPrice;
 use Bjerke\Ecommerce\Exceptions\OrderNotEditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,20 +57,6 @@ class Order extends BreadModel
             false,
             fn (Order $order) => self::defineAddressFields($order)
         );
-
-        $this->addFieldHasOne(
-            'shippingMethod',
-            Lang::get('ecommerce::models.shipping_method.singular'),
-            self::$FIELD_OPTIONAL,
-            'name',
-            null,
-            [
-                'fillable' => (!$this->exists || $this->status === OrderStatus::DRAFT),
-                'extra_data' => [
-                    'prefetch' => true
-                ]
-            ]
-        );
     }
 
     private static function defineAddressFields(Order $order): void
@@ -96,6 +83,11 @@ class Order extends BreadModel
     public function shippingMethod(): BelongsTo
     {
         return $this->belongsTo(config('ecommerce.models.shipping_method'));
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(config('ecommerce.models.payment'));
     }
 
     public static function createFromCart($cartId): Order
@@ -154,6 +146,80 @@ class Order extends BreadModel
                 'quantity' => $cartItem->quantity
             ]);
         });
+
+        return $this;
+    }
+
+    public function validateShippingMethod(int $shippingMethodId): ShippingMethod
+    {
+        $newShipping = ShippingMethod::findOrFail($shippingMethodId);
+
+        /* @var Price $price */
+        $price = $newShipping->prices()
+                             ->where('currency', $this->currency)
+                             ->where('store_id', $this->store_id)
+                             ->first();
+
+        if (!$price) {
+            throw new InvalidShippingMethodPrice();
+        }
+
+        return $newShipping;
+    }
+
+    public function setShippingMethod(?int $shippingMethodId): Order
+    {
+        /* @var ShippingMethod $currentShipping */
+        $currentShipping = $this->shippingMethod;
+        if ($currentShipping->id === $shippingMethodId) {
+            return $this;
+        }
+
+        if ($this->paid_status !== PaidStatus::UNPAID) {
+            throw new OrderNotEditable();
+        }
+
+        if ($shippingMethodId) {
+            $newShipping = $this->validateShippingMethod($shippingMethodId);
+            $this->shipping_method_id = $newShipping->id;
+        } else {
+            $this->shipping_method_id = null;
+        }
+
+        // If there was a previous shipping method selected,
+        // we need to adjust the order value first
+        if ($currentShipping) {
+            /* @var Price $price */
+            $price = $currentShipping->prices()
+                                     ->where('currency', $this->currency)
+                                     ->where('store_id', $this->store_id)
+                                     ->first();
+
+            if (!$price) {
+                throw new InvalidShippingMethodPrice();
+            }
+
+            $shippingPriceTotals = $price->calculateTotals(1);
+            $this->order_value -= $shippingPriceTotals['total'];
+            $this->order_vat_value -= ($shippingPriceTotals['total'] - $shippingPriceTotals['total_ex_vat']);
+        }
+
+        if ($newShipping) {
+            // Update order totals with new shipping
+            /* @var Price $price */
+            $newPrice = $newShipping->prices()
+                                    ->where('currency', $this->currency)
+                                    ->where('store_id', $this->store_id)
+                                    ->first();
+
+            if (!$newPrice) {
+                throw new InvalidShippingMethodPrice();
+            }
+
+            $shippingPriceTotals = $newPrice->calculateTotals(1);
+            $this->order_value += $shippingPriceTotals['total'];
+            $this->order_vat_value += ($shippingPriceTotals['total'] - $shippingPriceTotals['total_ex_vat']);
+        }
 
         return $this;
     }
