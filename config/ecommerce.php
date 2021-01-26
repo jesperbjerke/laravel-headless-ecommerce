@@ -286,7 +286,18 @@ return [
         | app url and routing prefix etc.
         |
         */
-        'notify_url' => env('PAYMENT_NOTIFY_URL', 'payments/callback')
+        'notify_url' => env('PAYMENT_NOTIFY_URL', 'payments/callback'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment logs time to live
+        |--------------------------------------------------------------------------
+        |
+        | Specify the length of time (in days) that the payment logs should be kept
+        | Is only used in the command `ecommerce:clean-payment-logs`
+        |
+        */
+        'log_ttl' => env('PAYMENT_LOG_TTL', 365)
     ],
 
     'stock' => [

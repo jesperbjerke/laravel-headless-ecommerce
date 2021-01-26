@@ -14,7 +14,7 @@ class CleanPaymentLogs extends Command
 
     public function handle(): void
     {
-        $ttlOption = $this->option('older-than') ?: config('ecommerce.orders.log_ttl');
+        $ttlOption = $this->option('older-than') ?: config('ecommerce.payments.log_ttl');
         $ttl = Carbon::now()->subDays((int) $ttlOption);
         PaymentLog::where('created_at', '<', $ttl)->delete();
     }

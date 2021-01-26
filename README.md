@@ -24,8 +24,8 @@ If you want to change the included lang files:
 php artisan vendor:publish --tag="ecommerce.lang"
 ```
 
-### Models
-Models can be overridden with your own versions. Just extend the original ones and configure your model class in the config file.
+### Extending functionality of models
+All models used by this package can be overridden with your own versions. Just extend the original ones and configure your model class in the config file.
 
 ### Product
     - Product types
@@ -81,49 +81,61 @@ Models can be overridden with your own versions. Just extend the original ones a
     - Laravel Translatable
 
 ### Commands
-    - ecommerce:clean-abandoned-carts
-    - ecommerce:check-expiring-carts
-    - ecommerce:clean-order-logs
-    - ecommerce:clean-stock-logs
-    - ecommerce:clean-payment-logs
+
+These are commands that you can optionally add to your schedule to have some things run automatically.
+
+- `ecommerce:clean-abandoned-carts` - Checks for expired carts and deletes them (suggested to run daily)
+- `ecommerce:check-expiring-carts` - Triggers expiring cart event (suggested to run daily)
+- `ecommerce:clean-order-logs` - Deletes order logs older than the config `ecommerce.orders.log_ttl` (suggested to run daily)
+- `ecommerce:clean-stock-logs` - Deletes stock logs older than the config `ecommerce.stock.log_ttl` (suggested to run daily)
+- `ecommerce:clean-payment-logs` - Deletes payment logs older than the config `ecommerce.payment.log_ttl` (suggested to run daily)
 
 ### Events
-    - CartExpiring
-        - Keep in mind that these can be triggered multiple times for the same cart. If you are sending a notification, you probably need to check if you've already sent this notification so you don't spam your customers.
-    - LowStock
-        - Keep in mind that these can be triggered multiple times for the same cart. You probable need to keep track if you have already acted on this event before.
+
+- CartExpiring
+    - This event will fire when a cart is about to expire (if a schedule for `ecommerce:check-expiring-carts` is setup). This can be useful for sending notifications to the customer to come back and finish their purchase.
+    - Keep in mind that these can be triggered multiple times for the same cart. If you are sending a notification, you probably need to check if you've already sent this notification so you don't spam your customers.
+- LowStock
+    - This will fire when the low stock threshold is reached after updating stock.
+    - Keep in mind that these can be triggered multiple times for the same cart. You probable need to keep track if you have already acted on this event before.
 
 ### Routes
-    - publish to host your own
-    - configurations
-    - overriding controllers
-    - Authentication & Authorization
-        - Default authentication middleware to require logged in user is "auth:api". You can configure this in the config file.
-        - Is using the "can" middleware, to prohibit unautorized access to non-public endpoints. You can use packages like Bouncer or Spatie Laravel Permission to handle abilities, or define your own Gates & Policies.
-        - Abilities:
-            - manage-products
-            - manage-brands
-            - manage-categories
-            - manage-deals
-            - manage-prices
-            - manage-orders
-            - manage-prices
-            - manage-properties
-            - manage-shipping-methods
-            - manage-stocks
-            - manage-stores
+To see all registered routes run:
+```shell script
+php artisan route:list
+```
 
+You can override routes in two different ways. First way is to write your own controller, extending the original one, then configure that controller in the config file (similar to the config for models).
+The second way is to publish the route file.
 ```shell script
 php artisan vendor:publish --tag="ecommerce.routes"
 ```
+This will completely decouple the routefile within the package. Now you are free to change whatever you like. Keep in mind though that possible future updates to the route file will have to be migrated manually to your custom file.
 
+There are also some configuration options regarding routing, such as prefix to use, default global middleware and which authentication middleware to use. You can look more closely in the config file of this package so see what you can change.
+
+### Authentication & Authorization
+Default authentication middleware to require logged in user is `auth:api`. You can configure this in the config file.
+
+We are also using the `can` middleware, to prohibit unauthorized access to non-public endpoints. You can use packages like Bouncer or Spatie Laravel Permission to handle abilities, or define your own Gates & Policies.
+
+#### Abilities used:
+- manage-products
+- manage-brands
+- manage-categories
+- manage-deals
+- manage-prices
+- manage-orders
+- manage-prices
+- manage-properties
+- manage-shipping-methods
+- manage-stocks
+- manage-stores
 
 ### Customers / Users
 This package does not provide any logic for handling customers or logged in users. This is up to the implementing application to add.
 As an example, you might want to add a user_id column to the orders table to be able to link it to a user account.
 Just change the migration after publishing and then extend the appropriate models/observers/controllers to handle this new column.
-
-### Extending / Overriding
 
 ### Disabling scout
 You can disable the automatic Scout integration by defining the following in your .env file
@@ -140,17 +152,20 @@ SCOUT_DRIVER=null
 - A queue worker running
 
 ### Packages used
-- Omnipay
-- Laravel Scout
-- MoneyPHP
-- Laravel BREAD
-- Laravel API Query Builder
-- Spatie Laravel Media library
-- Spatie Laravel Sluggable
-- Spatie Laravel Translatable
-- Laravel NestedSet
+- [Laravel BREAD](https://github.com/jesperbjerke/laravel-bread)
+- [Laravel API Query Builder](https://github.com/jesperbjerke/laravel-api-query-builder)
+- [Laravel Scout](https://github.com/laravel/scout)
+- [MoneyPHP](https://github.com/moneyphp/money)
+- [Spatie Laravel Media library](https://github.com/spatie/laravel-medialibrary)
+- [Spatie Laravel Sluggable](https://github.com/spatie/laravel-sluggable)
+- [Spatie Laravel Translatable](https://github.com/spatie/laravel-translatable)
+- [Laravel NestedSet](https://github.com/lazychaser/laravel-nestedset)
+- [Omnipay](https://github.com/thephpleague/omnipay)
 
-### On the roadmap
+### Ideas for improvement
+
+_Points marked with (?) are unsure if relevant to this package scope_
+
 - Deals
     - Discount code
     - Gift cards
@@ -164,14 +179,20 @@ SCOUT_DRIVER=null
     - Video (?)
 - On demand stock
 - Optionally reserve stock upon adding to cart
-- Wishlists
-- Favorites
-- Reviews
-- Prisjakt/Pricerunner integration - Separate package
+- Wishlists (?)
+- Favorites (?)
+- Reviews/Rating (?)
+- Cart
+  - Optionally reserve stock upon adding to cart
+- More alternatives to shipping pricing
+  - Dynamic (calculated based on ordered products)
+  - Tiers?
+  - Free shipping above X order value?
 - Product upsell, cross-sell
 - Suppliers
     - Procurements
 - PoS features (?)
+- Prisjakt/Pricerunner integration - Separate package
 - Facebook / Instagram shopping (?) - Separate package
 - Google Shopping (?) - Separate package
 - Webhooks (?)
