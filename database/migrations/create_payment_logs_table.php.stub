@@ -11,7 +11,7 @@ class CreatePaymentLogsTable extends Migration
         Schema::create('payment_logs', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('payment_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignUuid('payment_id')->nullable()->constrained()->onDelete('cascade');
             $table->tinyInteger('type')->unsigned();
             $table->json('meta')->nullable();
 
